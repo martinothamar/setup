@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  name: Configure git
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Default branch
+      community.general.git_config:
+        name: init.defaultBranch
+        scope: global
+        value: main
+
+    - name: User name
+      community.general.git_config:
+        name: user.name
+        scope: global
+        value: Martin Othamar
+
+    - name: User email
+      community.general.git_config:
+        name: user.email
+        scope: global
+        value: martin@othamar.net

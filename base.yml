@@ -1,0 +1,35 @@
+---
+- hosts: localhost
+  name: Install base
+  become: true
+
+  tasks:
+    - name: Install ansible-lint
+      ansible.builtin.pip:
+        name: ansible-lint
+
+    - name: "Install system packages"
+      ansible.builtin.apt:
+        name:
+          - jq
+          - curl
+          - apt-transport-https
+          - build-essential
+          - gnupg2
+          - vim
+          - bat
+          - exa
+          - code
+          - google-chrome-stable
+          - htop
+          - linux-tools-common
+          - linux-tools-generic
+          - hwloc
+          - libssl-dev
+          - git
+          - nmap
+          - zlib1g-dev
+          - hyperfine
+          - tre-command
+          - neofetch
+        state: present

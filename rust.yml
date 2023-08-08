@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  name: Install Rust
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Check if cargo is installed
+      register: cargo_exists
+      changed_when: cargo_exists.rc != 0
+      ignore_errors: true
+      ansible.builtin.command: which cargo
+
+    - name: Download installer
+      when: cargo_exists is failed
+      ansible.builtin.get_url:
+        url: https://sh.rustup.rs
+        dest: /tmp/sh.rustup.rs
+        mode: '0755'
+        force: 'yes'
+
+    - name: Install rustup
+      when: cargo_exists is failed
+      changed_when: cargo_exists is failed
+      ansible.builtin.command: /tmp/sh.rustup.rs -y
+
+    - name: Install nightly toolchain
+      when: cargo_exists is failed
+      changed_when: cargo_exists is failed
+      ansible.builtin.command: rustup toolchain install nightly

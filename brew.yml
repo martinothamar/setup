@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  name: Install Homebrew
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Check if brew is installed
+      register: brew_exists
+      changed_when: brew_exists.rc != 0
+      ignore_errors: true
+      ansible.builtin.command: which brew
+
+    - name: Download installer
+      when: brew_exists is failed
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+        dest: /tmp/brew.install.sh
+        mode: '0755'
+        force: 'yes'
+
+    - name: Install brew
+      when: brew_exists is failed
+      changed_when: brew_exists is failed
+      ansible.builtin.command: /tmp/brew.install.sh
+
+    - name: Add brew to path
+      when: brew_exists is failed
+      changed_when: brew_exists is failed
+      ansible.builtin.command: echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> $HOME/.profile

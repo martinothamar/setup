@@ -1,0 +1,13 @@
+---
+- name: Setup base
+  ansible.builtin.import_playbook: base.yml
+- name: Setup Homebrew
+  ansible.builtin.import_playbook: brew.yml
+- name: Setup Rust
+  ansible.builtin.import_playbook: rust.yml
+- name: Setup Homebrew packages
+  ansible.builtin.import_playbook: brew-pkgs.yml
+- name: Setup aliases
+  ansible.builtin.import_playbook: alias.yml
+- name: Setup git config
+  ansible.builtin.import_playbook: git.yml

@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  name: Install Homebrew packages
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+
+    - name: Install brew packages
+      community.general.homebrew:
+        name:
+          - gping
+        state: present
