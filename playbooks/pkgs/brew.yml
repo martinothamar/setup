@@ -5,9 +5,9 @@
   become_user: "{{ lookup('env', 'USER') }}"
 
   tasks:
-
     - name: Install brew packages
       community.general.homebrew:
         name:
           - gping
+          - just
         state: present

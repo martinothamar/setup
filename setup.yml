@@ -1,21 +1,24 @@
 ---
-- name: Setup base
-  ansible.builtin.import_playbook: playbooks/base.yml
+- name: Setup apt packages
+  ansible.builtin.import_playbook: playbooks/pkgs/apt.yml
+
+- name: Setup apt packages
+  ansible.builtin.import_playbook: playbooks/pkgs/pip.yml
 
 - name: Setup Homebrew
-  ansible.builtin.import_playbook: playbooks/brew.yml
+  ansible.builtin.import_playbook: playbooks/brew-install.yml
+
+- name: Setup Homebrew packages
+  ansible.builtin.import_playbook: playbooks/pkgs/brew.yml
 
 - name: Setup Rust
   ansible.builtin.import_playbook: playbooks/rust.yml
 
-- name: Setup Homebrew packages
-  ansible.builtin.import_playbook: playbooks/brew-pkgs.yml
-
 - name: Setup aliases
-  ansible.builtin.import_playbook: playbooks/alias.yml
+  ansible.builtin.import_playbook: playbooks/config/alias.yml
 
 - name: Setup git config
-  ansible.builtin.import_playbook: playbooks/git.yml
+  ansible.builtin.import_playbook: playbooks/config/git.yml
 
 - name: Setup system config
-  ansible.builtin.import_playbook: playbooks/config.yml
+  ansible.builtin.import_playbook: playbooks/config/config.yml

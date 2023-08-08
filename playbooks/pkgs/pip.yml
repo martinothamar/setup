@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  name: Install pip packages
+  become: true
+
+  tasks:
+    - name: Install ansible-lint
+      ansible.builtin.pip:
+        name: ansible-lint

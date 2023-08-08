@@ -1,13 +1,9 @@
 ---
 - hosts: localhost
-  name: Install base
+  name: Install apt packages
   become: true
 
   tasks:
-    - name: Install ansible-lint
-      ansible.builtin.pip:
-        name: ansible-lint
-
     - name: "Install system packages"
       ansible.builtin.apt:
         name:
