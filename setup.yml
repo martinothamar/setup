@@ -22,3 +22,6 @@
 
 - name: Setup system config
   ansible.builtin.import_playbook: playbooks/config/config.yml
+
+- name: Setup Docker
+  ansible.builtin.import_playbook: playbooks/docker.yml
