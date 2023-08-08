@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  name: Configuration
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Neofetch
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: neofetch
+        state: present
+        insertafter: EOF
