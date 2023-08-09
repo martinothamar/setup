@@ -28,3 +28,18 @@
       when: cargo_exists is failed
       changed_when: cargo_exists is failed
       ansible.builtin.command: rustup toolchain install nightly
+
+    - name: Update self
+      register: self_update
+      changed_when: "'unchanged' not in self_update.stdout"
+      ansible.builtin.command: rustup self update
+
+    - name: Update stable
+      register: stable_update
+      changed_when: "'unchanged' not in stable_update.stdout"
+      ansible.builtin.command: rustup update stable
+
+    - name: Update nightly
+      register: nightly_update
+      changed_when: "'unchanged' not in nightly_update.stdout"
+      ansible.builtin.command: rustup update nightly

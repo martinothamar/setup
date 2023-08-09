@@ -1,0 +1,41 @@
+---
+- hosts: localhost
+  name: Install golang
+  become: true
+
+  tasks:
+    - name: Get latest version
+      ansible.builtin.set_fact:
+        new_version: "{{ lookup('ansible.builtin.url', 'https://golang.org/VERSION?m=text', split_lines=True, wantlist=True) | first }}"
+
+    - name: Check if go is installed
+      register: go_exists
+      changed_when: go_exists.rc != 0
+      ignore_errors: true
+      ansible.builtin.command: which go
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg:
+          - "Latest version: '{{ new_version }}'"
+
+    - name: Download
+      when: go_exists is failed
+      ansible.builtin.get_url:
+        url: "https://go.dev/dl/{{ new_version }}.linux-amd64.tar.gz"
+        dest: "/tmp/{{ new_version }}.linux-amd64.tar.gz"
+        mode: '0644'
+        force: 'yes'
+
+    - name: Unpack
+      when: go_exists is failed
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ new_version }}.linux-amd64.tar.gz"
+        dest: /usr/local
+
+    - name: Add to path
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "export PATH=\"$PATH:/usr/local/go/bin\""
+        state: present
+        insertafter: EOF

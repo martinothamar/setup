@@ -17,6 +17,9 @@
 - name: Setup dotnet
   ansible.builtin.import_playbook: playbooks/dotnet.yml
 
+- name: Setup golang
+  ansible.builtin.import_playbook: playbooks/go.yml
+
 - name: Setup aliases
   ansible.builtin.import_playbook: playbooks/config/alias.yml
 
