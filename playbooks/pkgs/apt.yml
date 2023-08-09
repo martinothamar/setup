@@ -30,4 +30,6 @@
           - hyperfine
           - tre-command
           - neofetch
+          - bind9-dnsutils
+          - wavemon
         state: present
