@@ -20,6 +20,9 @@
 - name: Setup golang
   ansible.builtin.import_playbook: playbooks/go.yml
 
+- name: Setup nvm
+  ansible.builtin.import_playbook: playbooks/nvm.yml
+
 - name: Setup aliases
   ansible.builtin.import_playbook: playbooks/config/alias.yml
 

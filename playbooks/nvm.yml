@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  name: Install nvm
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Latest nvm release
+      register: nvm_release
+      changed_when: true
+      ansible.builtin.shell:
+        curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | grep -i "tag_name" | awk -F '"' '{print $4}'
+      tags:
+        - skip_ansible_lint
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg:
+          - "Latest version: '{{ nvm_release.stdout }}'"
+
+    - name: Check if nvm is installed
+      register: nvm_exists
+      changed_when: nvm_exists.rc != 0
+      ignore_errors: true
+      ansible.builtin.command: which nvm
+
+    - name: Download installer
+      when: nvm_exists is failed
+      ansible.builtin.get_url:
+        url: "https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_release.stdout }}/install.sh"
+        dest: /tmp/nvm-install.sh
+        mode: '0755'
+        force: 'yes'
+
+    - name: Install nvm
+      when: nvm_exists is failed
+      changed_when: nvm_exists is failed
+      ansible.builtin.command: /tmp/nvm-install.sh

@@ -8,16 +8,16 @@
       ansible.builtin.set_fact:
         new_version: "{{ lookup('ansible.builtin.url', 'https://golang.org/VERSION?m=text', split_lines=True, wantlist=True) | first }}"
 
+    - name: Debug
+      ansible.builtin.debug:
+        msg:
+          - "Latest version: '{{ new_version }}'"
+
     - name: Check if go is installed
       register: go_exists
       changed_when: go_exists.rc != 0
       ignore_errors: true
       ansible.builtin.command: which go
-
-    - name: Debug
-      ansible.builtin.debug:
-        msg:
-          - "Latest version: '{{ new_version }}'"
 
     - name: Download
       when: go_exists is failed
