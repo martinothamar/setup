@@ -1,0 +1,35 @@
+---
+- hosts: localhost
+  name: Install dotnet
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Download installer
+      ansible.builtin.get_url:
+        url: https://dot.net/v1/dotnet-install.sh
+        dest: /tmp/dotnet-install.sh
+        mode: '0755'
+        force: 'yes'
+
+    - name: Install dotnet LTS
+      register: lts_exists
+      changed_when: "'is already installed' not in lts_exists.stdout"
+      ansible.builtin.command: /tmp/dotnet-install.sh --channel LTS --version latest
+
+    - name: Install dotnet STS
+      register: sts_exists
+      changed_when: "'is already installed' not in sts_exists.stdout"
+      ansible.builtin.command: /tmp/dotnet-install.sh --channel STS --version latest
+
+    - name: Install dotnet preview
+      register: preview_exists
+      changed_when: "'is already installed' not in preview_exists.stdout"
+      ansible.builtin.command: /tmp/dotnet-install.sh --channel 8.0 --quality preview
+
+    - name: Add to path
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "export PATH=\"$PATH:{{ lookup('env', 'HOME') }}/.dotnet\""
+        state: present
+        insertafter: EOF

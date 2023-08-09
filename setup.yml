@@ -14,6 +14,9 @@
 - name: Setup Rust
   ansible.builtin.import_playbook: playbooks/rust.yml
 
+- name: Setup dotnet
+  ansible.builtin.import_playbook: playbooks/dotnet.yml
+
 - name: Setup aliases
   ansible.builtin.import_playbook: playbooks/config/alias.yml
 
