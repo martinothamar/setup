@@ -1,0 +1,44 @@
+---
+- hosts: localhost
+  name: Install zigup
+  become: true
+
+  tasks:
+    - name: Latest zigup release
+      register: zigup_release
+      changed_when: true
+      ansible.builtin.shell:
+        curl -s https://api.github.com/repos/marler8997/zigup/releases/latest | grep -i "tag_name" | awk -F '"' '{print $4}'
+      tags:
+        - skip_ansible_lint
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg:
+          - "Latest zigup version: '{{ zigup_release.stdout }}'"
+
+    - name: Check if zigup is installed
+      register: zigup_exists
+      changed_when: zigup_exists.rc != 0
+      ignore_errors: true
+      ansible.builtin.command: which zigup
+
+    - name: Download zigup
+      when: zigup_exists is failed
+      ansible.builtin.get_url:
+        url: "https://github.com/marler8997/zigup/releases/download/{{ zigup_release.stdout }}/zigup.ubuntu-latest-x86_64.zip"
+        dest: "/tmp/zigup.ubuntu-latest-x86_64.zip"
+        mode: '0644'
+        force: 'yes'
+
+    - name: Extract zigup
+      when: zigup_exists is failed
+      ansible.builtin.unarchive:
+        src: "/tmp/zigup.ubuntu-latest-x86_64.zip"
+        dest: /usr/local/bin
+
+    - name: Set execution permission on zigup binary
+      when: zigup_exists is failed
+      ansible.builtin.file:
+        dest: /usr/local/bin/zigup
+        mode: 'a+x'
