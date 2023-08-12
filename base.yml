@@ -5,6 +5,9 @@
 - name: Setup deb packages
   ansible.builtin.import_playbook: playbooks/pkgs/deb.yml
 
+- name: Setup terminal
+  ansible.builtin.import_playbook: playbooks/pkgs/wezterm.yml
+
 - name: Setup apt packages
   ansible.builtin.import_playbook: playbooks/pkgs/pip.yml
 

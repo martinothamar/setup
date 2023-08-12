@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  name: Install wezterm
+  become: true
+
+  tasks:
+    - name: Latest wezterm release
+      register: wezterm_release
+      changed_when: true
+      ansible.builtin.shell:
+        curl -s https://api.github.com/repos/wez/wezterm/releases/latest | grep -i "tag_name" | awk -F '"' '{print $4}'
+      tags:
+        - skip_ansible_lint
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg:
+          - "Latest wezterm version: '{{ wezterm_release.stdout }}'"
+
+    - name: "Install wezterm"
+      ansible.builtin.apt:
+        state: present
+        deb: "https://github.com/wez/wezterm/releases/download/{{ wezterm_release.stdout }}/wezterm-{{ wezterm_release.stdout }}.Ubuntu22.04.deb"
