@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  name: Install flatpak packages
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Add flathub
+      community.general.flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: user
+
+    - name: "Install flatpak packages"
+      community.general.flatpak:
+        name:
+          - com.spotify.Client
+          - com.slack.Slack
+          - com.discordapp.Discord
+        method: user
