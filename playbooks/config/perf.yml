@@ -33,3 +33,11 @@
         group: root
         state: link
         force: true
+
+    - name: Configure sysctl
+      ansible.posix.sysctl:
+        name: kernel.perf_event_paranoid
+        value: -1
+        state: present
+        sysctl_file: /etc/sysctl.d/local.conf
+        reload: true
