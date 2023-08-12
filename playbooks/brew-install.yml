@@ -24,7 +24,9 @@
       changed_when: brew_exists is failed
       ansible.builtin.command: /tmp/brew.install.sh
 
-    - name: Add brew to path
-      when: brew_exists is failed
-      changed_when: brew_exists is failed
-      ansible.builtin.command: echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> $HOME/.profile
+    - name: Add to path
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\""
+        state: present
+        insertafter: EOF

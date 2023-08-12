@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  name: Install deb packages
+  become: true
+
+  tasks:
+    - name: "Install vscode"
+      ansible.builtin.apt:
+        state: present
+        deb: http://go.microsoft.com/fwlink/?LinkID=760868

@@ -1,0 +1,18 @@
+---
+- name: Setup Rust tooling
+  ansible.builtin.import_playbook: playbooks/rust-install.yml
+
+- name: Setup Rust
+  ansible.builtin.import_playbook: playbooks/rust.yml
+
+- name: Setup dotnet
+  ansible.builtin.import_playbook: playbooks/dotnet.yml
+
+- name: Setup golang
+  ansible.builtin.import_playbook: playbooks/go.yml
+
+- name: Setup nvm
+  ansible.builtin.import_playbook: playbooks/nvm.yml
+
+- name: Setup Docker
+  ansible.builtin.import_playbook: playbooks/docker.yml

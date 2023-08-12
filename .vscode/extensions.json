@@ -2,6 +2,11 @@
     "recommendations": [
         "redhat.ansible",
         "redhat.vscode-yaml",
-        "EditorConfig.EditorConfig"
+        "editorconfig.editorconfig",
+        "ms-dotnettools.csdevkit",
+        "vintharas.learn-vim",
+        "vscodevim.vim",
+        "rust-lang.rust-analyzer",
+        "golang.go"
     ]
 }

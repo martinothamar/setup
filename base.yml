@@ -1,0 +1,24 @@
+---
+- name: Setup apt packages
+  ansible.builtin.import_playbook: playbooks/pkgs/apt.yml
+
+- name: Setup deb packages
+  ansible.builtin.import_playbook: playbooks/pkgs/deb.yml
+
+- name: Setup apt packages
+  ansible.builtin.import_playbook: playbooks/pkgs/pip.yml
+
+- name: Setup Homebrew
+  ansible.builtin.import_playbook: playbooks/brew-install.yml
+
+- name: Setup Homebrew packages
+  ansible.builtin.import_playbook: playbooks/pkgs/brew.yml
+
+- name: Setup aliases
+  ansible.builtin.import_playbook: playbooks/config/alias.yml
+
+- name: Setup git config
+  ansible.builtin.import_playbook: playbooks/config/git.yml
+
+- name: Setup perf
+  ansible.builtin.import_playbook: playbooks/config/perf.yml
