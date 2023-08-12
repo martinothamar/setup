@@ -16,3 +16,6 @@
 
 - name: Setup Docker
   ansible.builtin.import_playbook: playbooks/docker.yml
+
+- name: Setup wrk
+  ansible.builtin.import_playbook: playbooks/pkgs/wrk2.yml

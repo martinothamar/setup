@@ -31,4 +31,5 @@
           - neofetch
           - bind9-dnsutils
           - wavemon
+          - fio
         state: present

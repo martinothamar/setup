@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  name: Install wrk2
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Clone the repo
+      ansible.builtin.git:
+        repo: https://github.com/giltene/wrk2.git
+        dest: "{{ lookup('env', 'HOME') }}/wrk2"
+        single_branch: true
+        version: master
+
+    - name: Build wrk2
+      become: true
+      community.general.make:
+        chdir: "{{ lookup('env', 'HOME') }}/wrk2"
+        params:
+          j: 4
+
+    - name: Copy executable
+      become: true
+      become_user: root
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/wrk2/wrk"
+        dest: /usr/local/bin/wrk
+        owner: root
+        group: root
+        mode: '0755'
