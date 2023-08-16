@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  name: Install pmu-tools
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Clone repo
+      ansible.builtin.git:
+        repo: https://github.com/andikleen/pmu-tools.git
+        dest: "{{ lookup('env', 'HOME') }}/pmu-tools"
+        single_branch: true
+        version: master
+
+    - name: Add to path
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "export PATH=\"$PATH:{{ lookup('env', 'HOME') }}/pmu-tools\""
+        state: present
+        insertafter: EOF

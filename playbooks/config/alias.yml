@@ -18,3 +18,10 @@
         line: alias cat="batcat --no-pager"
         state: present
         insertafter: EOF
+
+    - name: Alias python -> python3
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: alias python=python3
+        state: present
+        insertafter: EOF
