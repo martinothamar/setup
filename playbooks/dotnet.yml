@@ -33,3 +33,10 @@
         line: "export PATH=\"$PATH:{{ lookup('env', 'HOME') }}/.dotnet\""
         state: present
         insertafter: EOF
+
+    - name: Add DOTNET_ROOT
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "export DOTNET_ROOT=\"{{ lookup('env', 'HOME') }}/.dotnet\""
+        state: present
+        insertafter: EOF

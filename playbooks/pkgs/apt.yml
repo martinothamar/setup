@@ -32,4 +32,6 @@
           - bind9-dnsutils
           - wavemon
           - fio
+          - iputils-tracepath
+          - speedtest-cli
         state: present
