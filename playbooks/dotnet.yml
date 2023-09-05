@@ -27,10 +27,17 @@
       changed_when: "'is already installed' not in preview_exists.stdout"
       ansible.builtin.command: /tmp/dotnet-install.sh --channel 8.0 --quality preview
 
-    - name: Add to path
+    - name: Add .dotnet to path
       ansible.builtin.lineinfile:
         path: "{{ lookup('env', 'HOME') }}/.bashrc"
         line: "export PATH=\"$PATH:{{ lookup('env', 'HOME') }}/.dotnet\""
+        state: present
+        insertafter: EOF
+
+    - name: Add .dotnet/tools to path
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "export PATH=\"$PATH:{{ lookup('env', 'HOME') }}/.dotnet/tools\""
         state: present
         insertafter: EOF
 
