@@ -21,6 +21,7 @@
       register: zigup_exists
       changed_when: zigup_exists.rc != 0
       ignore_errors: true
+      # TODO - 'which' might not work when become: true (root) ?
       ansible.builtin.command: which zigup
 
     - name: Download zigup

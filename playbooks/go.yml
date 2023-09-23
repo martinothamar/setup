@@ -13,14 +13,12 @@
         msg:
           - "Latest version: '{{ new_version }}'"
 
-    - name: Check if go is installed
-      register: go_exists
-      changed_when: go_exists.rc != 0
-      ignore_errors: true
-      ansible.builtin.command: which go
+    - name: Remove existing go installation
+      ansible.builtin.file:
+        path: /usr/local/go/
+        state: absent
 
     - name: Download
-      when: go_exists is failed
       ansible.builtin.get_url:
         url: "https://go.dev/dl/{{ new_version }}.linux-amd64.tar.gz"
         dest: "/tmp/{{ new_version }}.linux-amd64.tar.gz"
@@ -28,7 +26,6 @@
         force: 'yes'
 
     - name: Unpack
-      when: go_exists is failed
       ansible.builtin.unarchive:
         src: "/tmp/{{ new_version }}.linux-amd64.tar.gz"
         dest: /usr/local
