@@ -12,6 +12,8 @@
           - apt-transport-https
           - ca-certificates
           - build-essential
+          - clang
+          - cmake
           - gnupg2
           - gnupg
           - vim
