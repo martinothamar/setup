@@ -12,4 +12,7 @@
           - just
           - typst
           - gh
+          - openjdk
+          - graphviz
+          - gnuplot
         state: present
