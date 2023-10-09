@@ -19,6 +19,9 @@ Probably only works for Ubuntu/Pop OS >= 22.04
 ## Run
 
 ```bash
+# Init
+./bootstrap.sh
+
 # Setup everything
 ansible-playbook setup.yml -K # K for sudo prompt
 
@@ -27,3 +30,7 @@ ansible-playbook setup.yml -K # K for sudo prompt
 # Setup only aliases
 ansible-playbook playbooks/alias.yml
 ```
+
+### Nix
+
+https://github.com/DeterminateSystems/nix-installer

@@ -15,4 +15,5 @@
           - openjdk
           - graphviz
           - gnuplot
+          - direnv
         state: present

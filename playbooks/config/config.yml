@@ -11,3 +11,10 @@
         line: neofetch
         state: present
         insertafter: EOF
+
+    - name: Add direnv hook
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "eval \"$(direnv hook bash)\""
+        state: present
+        insertafter: EOF
