@@ -34,3 +34,14 @@ ansible-playbook playbooks/alias.yml
 ### Nix
 
 https://github.com/DeterminateSystems/nix-installer
+
+
+### LLVM
+
+https://apt.llvm.org/
+
+```bash
+# sudo ./llvm.sh <version number> all
+sudo ./llvm.sh 17 all
+clang++-17 --version
+```

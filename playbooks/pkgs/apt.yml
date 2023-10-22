@@ -12,8 +12,6 @@
           - apt-transport-https
           - ca-certificates
           - build-essential
-          - clang
-          - clang-format
           - cmake
           - gnupg2
           - gnupg
