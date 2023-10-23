@@ -13,6 +13,17 @@
           - ca-certificates
           - build-essential
           - cmake
+          - llvm
+          - libstdc++-12-dev
+          - lld
+          - clang
+          - python-is-python3
+          - lldb
+          - libicu-dev
+          - liblttng-ust-dev
+          - libkrb5-dev
+          - zlib1g-dev
+          - ninja-build
           - gnupg2
           - gnupg
           - vim
