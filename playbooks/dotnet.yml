@@ -22,10 +22,10 @@
       changed_when: "'is already installed' not in sts_exists.stdout"
       ansible.builtin.command: /tmp/dotnet-install.sh --channel STS --version latest
 
-    - name: Install dotnet preview
-      register: preview_exists
-      changed_when: "'is already installed' not in preview_exists.stdout"
-      ansible.builtin.command: /tmp/dotnet-install.sh --channel 8.0 --quality preview
+    # - name: Install dotnet preview
+    #   register: preview_exists
+    #   changed_when: "'is already installed' not in preview_exists.stdout"
+    #   ansible.builtin.command: /tmp/dotnet-install.sh --channel 8.0 --quality preview
 
     - name: Add .dotnet to path
       ansible.builtin.lineinfile:
