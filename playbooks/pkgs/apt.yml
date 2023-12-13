@@ -46,4 +46,5 @@
           - fio
           - iputils-tracepath
           - speedtest-cli
+          - sqlite3
         state: present
