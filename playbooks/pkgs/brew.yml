@@ -16,4 +16,5 @@
           - graphviz
           - gnuplot
           - direnv
+          - hyperfine
         state: present

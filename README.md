@@ -22,6 +22,9 @@ Probably only works for Ubuntu/Pop OS >= 22.04
 # Init
 ./bootstrap.sh
 
+# Don't have to setup everything like below,
+# but should probably have ansible-lint from pip playbook under pkgs
+
 # Setup everything
 ansible-playbook setup.yml -K # K for sudo prompt
 
