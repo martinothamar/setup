@@ -21,3 +21,14 @@
           - kind
           - k9s
         state: present
+
+    - name: Alias kubectl as k
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "{{ item.line }}"
+        state: present
+        insertafter: EOF
+      loop:
+        - { line: "source <(kubectl completion bash)" }
+        - { line: "alias k=kubectl" }
+        - { line: "complete -o default -F __start_kubectl k" }
