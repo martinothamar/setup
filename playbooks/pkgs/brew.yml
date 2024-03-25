@@ -17,4 +17,7 @@
           - gnuplot
           - direnv
           - hyperfine
+          - kubectl
+          - kind
+          - k9s
         state: present
