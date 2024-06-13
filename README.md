@@ -48,3 +48,27 @@ https://apt.llvm.org/
 sudo ./llvm.sh 17 all
 clang++-17 --version
 ```
+
+### WSL
+
+Use Ubuntu
+
+Updated Ansible
+```sh
+sudo apt-add-repository ppa:ansible/ansible
+```
+
+Make sure systemd is enabled
+```toml
+[boot]
+systemd=true
+```
+
+Then
+
+```
+ansible-playbook playbooks/pkgs/pip.yml -K
+ansible-playbook playbooks/pkgs/apt.yml -K # Comment out what's not necessary
+ansible-playbook playbooks/docker.yml -K
+ansible-playbook playbooks/brew-install.yml -K # May need to run as sudo/root first
+```

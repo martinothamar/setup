@@ -47,4 +47,5 @@
           - iputils-tracepath
           - speedtest-cli
           - sqlite3
+          - python3-debian
         state: present
