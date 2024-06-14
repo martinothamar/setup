@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install golang
+- name: Install golang
+  hosts: localhost
   become: true
 
   tasks:
@@ -37,7 +37,7 @@
         state: present
         insertafter: EOF
 
-    - name: Add $GOPATH/bin to path 
+    - name: Add $GOPATH/bin to path
       ansible.builtin.lineinfile:
         path: "{{ lookup('env', 'HOME') }}/.bashrc"
         line: "export PATH=\"$PATH:{{ lookup('env', 'HOME') }}/go/bin\""

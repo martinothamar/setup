@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install pip packages
+- name: Install pip packages
+  hosts: localhost
   become: true
 
   tasks:

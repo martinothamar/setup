@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install aliases
+- name: Install aliases
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 

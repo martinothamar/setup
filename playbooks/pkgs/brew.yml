@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install Homebrew packages
+- name: Install Homebrew packages
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 

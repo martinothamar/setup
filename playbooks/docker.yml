@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install Docker
+- name: Install Docker
+  hosts: localhost
   become: true
   tasks:
     - name: Install deps

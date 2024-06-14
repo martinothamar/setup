@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install pmu-tools
+- name: Install pmu-tools
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 

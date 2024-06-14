@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install Rust tooling
+- name: Install Rust tooling
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 

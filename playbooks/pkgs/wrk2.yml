@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install wrk2
+- name: Install wrk2
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 

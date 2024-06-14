@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Configure inotify sysctl limits
+- name: Configure inotify sysctl limits
+  hosts: localhost
   become: true
   vars:
     sysctl_config:

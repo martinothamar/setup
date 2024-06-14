@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install apt packages
+- name: Install apt packages
+  hosts: localhost
   become: true
 
   tasks:

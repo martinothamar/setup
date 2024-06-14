@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install deb packages
+- name: Install deb packages
+  hosts: localhost
   become: true
 
   tasks:

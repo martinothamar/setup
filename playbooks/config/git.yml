@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Configure git
+- name: Configure git
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 

@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install flatpak packages
+- name: Install flatpak packages
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 

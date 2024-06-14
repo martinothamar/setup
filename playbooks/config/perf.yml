@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Configure perf
+- name: Configure perf
+  hosts: localhost
   become: true
 
   tasks:

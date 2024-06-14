@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Install/update Rust
+- name: Install/update Rust
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 

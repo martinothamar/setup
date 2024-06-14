@@ -1,6 +1,6 @@
 ---
-- hosts: localhost
-  name: Configuration
+- name: Configuration
+  hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
 
