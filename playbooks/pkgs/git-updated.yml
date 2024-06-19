@@ -1,0 +1,16 @@
+---
+- name: Install updated Git
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Add Git ppa
+      ansible.builtin.apt_repository:
+        repo: ppa:git-core/ppa
+
+    - name: "Install git"
+      ansible.builtin.apt:
+        name:
+          - git
+        state: latest
+        only_upgrade: true

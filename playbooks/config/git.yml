@@ -11,6 +11,12 @@
         scope: global
         value: main
 
+    - name: Auto setup remote
+      community.general.git_config:
+        name: push.autoSetupRemote
+        scope: global
+        value: 'true'
+
     - name: User name
       community.general.git_config:
         name: user.name
