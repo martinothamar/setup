@@ -41,3 +41,16 @@
         state: present
         sysctl_file: /etc/sysctl.d/local.conf
         reload: true
+
+    - name: Configure kptr_restrict
+      ansible.posix.sysctl:
+        name: kernel.kptr_restrict
+        value: 0
+        state: present
+        sysctl_file: /etc/sysctl.d/local.conf
+        reload: true
+
+    # - name: Disable kptr_restrict
+    #   ansible.builtin.copy:
+    #     content: '0'
+    #     dest: /proc/sys/kernel/kptr_restrict
