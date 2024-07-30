@@ -4,35 +4,35 @@
   become: true
 
   tasks:
-    - name: Get uname -r
-      ansible.builtin.command: uname -r
-      changed_when: true
-      register: uname_result
+    # - name: Get uname -r
+    #   ansible.builtin.command: uname -r
+    #   changed_when: true
+    #   register: uname_result
 
-    - name: Get files in a folder
-      ansible.builtin.find:
-        paths: "/usr/lib/linux-tools/"
-        recurse: false
-        file_type: directory
-      register: found_files
+    # - name: Get files in a folder
+    #   ansible.builtin.find:
+    #     paths: "/usr/lib/linux-tools/"
+    #     recurse: false
+    #     file_type: directory
+    #   register: found_files
 
-    - name: Get latest file
-      ansible.builtin.set_fact:
-        latest_file: "{{ found_files.files | sort(attribute='mtime', reverse=true) | first }}"
+    # - name: Get latest file
+    #   ansible.builtin.set_fact:
+    #     latest_file: "{{ found_files.files | sort(attribute='mtime', reverse=true) | first }}"
 
-    - name: Prints two lines of messages, but only if there is an environment value set
-      ansible.builtin.debug:
-        msg:
-          - "uname -r: {{ uname_result.stdout }}, found linux-tools: {{ latest_file.path }}"
+    # - name: Prints two lines of messages, but only if there is an environment value set
+    #   ansible.builtin.debug:
+    #     msg:
+    #       - "uname -r: {{ uname_result.stdout }}, found linux-tools: {{ latest_file.path }}"
 
-    - name: Symlink perf
-      ansible.builtin.file:
-        src: "{{ latest_file.path }}/perf"
-        dest: /usr/bin/perf
-        owner: root
-        group: root
-        state: link
-        force: true
+    # - name: Symlink perf
+    #   ansible.builtin.file:
+    #     src: "{{ latest_file.path }}/perf"
+    #     dest: /usr/bin/perf
+    #     owner: root
+    #     group: root
+    #     state: link
+    #     force: true
 
     - name: Configure sysctl
       ansible.posix.sysctl:

@@ -1,10 +1,14 @@
 ---
 - name: Install deb packages
   hosts: localhost
-  become: true
 
   tasks:
-    - name: "Install vscode"
+    # - name: "Install vscode"
+    #   ansible.builtin.apt:
+    #     state: present
+    #     deb: http://go.microsoft.com/fwlink/?LinkID=760868
+
+    - name: "Install chrome"
       ansible.builtin.apt:
         state: present
-        deb: http://go.microsoft.com/fwlink/?LinkID=760868
+        deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb

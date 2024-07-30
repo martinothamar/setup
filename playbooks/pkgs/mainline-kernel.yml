@@ -1,0 +1,15 @@
+---
+- name: Install updated Git
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Add Mainline ppa
+      ansible.builtin.apt_repository:
+        repo: ppa:cappelikan/ppa
+
+    - name: "Install mainline"
+      ansible.builtin.apt:
+        name:
+          - mainline
+        state: latest
