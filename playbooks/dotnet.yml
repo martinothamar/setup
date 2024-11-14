@@ -12,20 +12,15 @@
         mode: '0755'
         force: 'yes'
 
-    - name: Install dotnet 6.0
-      register: exists_6
-      changed_when: "'is already installed' not in exists_6.stdout"
-      ansible.builtin.command: /tmp/dotnet-install.sh --channel 6.0 --version latest
-
-    - name: Install dotnet 7.0
-      register: exists_7
-      changed_when: "'is already installed' not in exists_7.stdout"
-      ansible.builtin.command: /tmp/dotnet-install.sh --channel 7.0 --version latest
-
     - name: Install dotnet 8.0
       register: exists_8
       changed_when: "'is already installed' not in exists_8.stdout"
       ansible.builtin.command: /tmp/dotnet-install.sh --channel 8.0 --version latest
+
+    - name: Install dotnet 9.0
+      register: exists_9
+      changed_when: "'is already installed' not in exists_9.stdout"
+      ansible.builtin.command: /tmp/dotnet-install.sh --channel 9.0 --version latest
 
     - name: Add .dotnet to path
       ansible.builtin.lineinfile:

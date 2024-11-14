@@ -4,8 +4,8 @@
   become: true
   vars:
     sysctl_config:
-      fs.inotify.max_user_instances: 512
-      user.max_inotify_instances: 512
+      fs.inotify.max_user_instances: 16384
+      user.max_inotify_instances: 16384
 
   tasks:
     - name: Configure sysctl
