@@ -3,6 +3,7 @@
   hosts: localhost
   become: true
   become_user: "{{ lookup('env', 'USER') }}"
+  # Still run with -K
 
   tasks:
     - name: Check if brew is installed
@@ -23,6 +24,8 @@
       when: brew_exists is failed
       changed_when: brew_exists is failed
       ansible.builtin.command: /tmp/brew.install.sh
+      environment:
+        NONINTERACTIVE: '1'
 
     - name: Add to path
       ansible.builtin.lineinfile:
