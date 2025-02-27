@@ -4,9 +4,28 @@
   become: true
 
   tasks:
-    - name: Add Git ppa
-      ansible.builtin.apt_repository:
-        repo: ppa:git-core/ppa
+    - name: Get ppa info from Launchpad API
+      uri:
+        url: "https://launchpad.net/api/1.0/~git-core/+archive/ppa"
+        return_content: yes
+        method: GET
+        headers:
+          Accept: "application/json"
+      register: launchpad_response
+
+    - name: Parse JSON to extract signing key fingerprint
+      ansible.builtin.set_fact:
+        signing_key_fingerprint: "{{ launchpad_response.json.signing_key_fingerprint }}"
+
+    - name: Add repo using key from URL
+      ansible.builtin.deb822_repository:
+        name: git
+        types: deb
+        uris: https://ppa.launchpadcontent.net/git-core/ppa/ubuntu
+        suites: "{{ ansible_distribution_release }}"
+        components: stable
+        architectures: amd64
+        signed_by: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x{{ signing_key_fingerprint }}"
 
     - name: "Install git"
       ansible.builtin.apt:

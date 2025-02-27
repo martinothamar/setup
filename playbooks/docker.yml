@@ -2,6 +2,7 @@
 - name: Install Docker
   hosts: localhost
   become: true
+  gather_facts: yes
   tasks:
     - name: Install deps
       ansible.builtin.apt:
@@ -10,6 +11,7 @@
           - ca-certificates
           - lsb-release
           - gnupg
+          - python3-debian
         state: present
 
     # Ref: https://github.com/ansible/ansible/issues/78063
@@ -18,7 +20,7 @@
         name: docker
         types: deb
         uris: https://download.docker.com/linux/ubuntu
-        suites: 'jammy'
+        suites: "{{ ansible_distribution_release }}"
         components: stable
         architectures: amd64
         signed_by: https://download.docker.com/linux/ubuntu/gpg
@@ -41,8 +43,8 @@
 
     - name: Add user to "docker" group
       ansible.builtin.user:
-        name: "martin"
-        group: "docker"
+        name: "{{ ansible_env.USER }}"
+        groups: ["docker"]
         append: true
 
     - name: Make sure Docker is running
