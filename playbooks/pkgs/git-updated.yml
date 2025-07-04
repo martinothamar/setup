@@ -23,7 +23,7 @@
         types: deb
         uris: https://ppa.launchpadcontent.net/git-core/ppa/ubuntu
         suites: "{{ ansible_distribution_release }}"
-        components: stable
+        components: main
         architectures: amd64
         signed_by: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x{{ signing_key_fingerprint }}"
 

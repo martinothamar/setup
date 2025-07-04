@@ -42,6 +42,9 @@
         state: present
 
     - name: Add user to "docker" group
+      # NOTE: when run with -K it is run as sudo
+      # might still have to
+      # `sudo usermod -aG docker $USER` afterwards
       ansible.builtin.user:
         name: "{{ ansible_env.USER }}"
         groups: ["docker"]
