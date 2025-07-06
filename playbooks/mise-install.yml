@@ -1,0 +1,29 @@
+---
+- name: Install Mise
+  hosts: localhost
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+
+  tasks:
+    - name: Install package
+      community.general.homebrew:
+        name:
+          - mise
+        state: present
+
+    - name: Shell activtation
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "eval \"$(mise activate bash)\""
+        state: present
+        insertafter: EOF
+
+    - name: Add .dotnet/tools to path
+      # When .NET is installed through mise,
+      # global tools are still stored in ~/.dotnet/tools
+      ansible.builtin.lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        line: "export PATH=\"$PATH:{{ lookup('env', 'HOME') }}/.dotnet/tools\""
+        state: present
+        insertafter: EOF
+
