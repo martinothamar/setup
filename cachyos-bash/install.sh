@@ -57,6 +57,8 @@ dev_tools() {
         fd
         bat
         htop
+        ncdu
+        dive
         just
         hyperfine
         typst
