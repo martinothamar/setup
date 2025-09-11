@@ -167,6 +167,7 @@ eval "\$(mise activate bash)"
 export PATH="\$PATH:\$HOME/.dotnet"
 export PATH="\$PATH:\$HOME/.dotnet/tools"
 export DOTNET_ROOT="\$HOME/.dotnet"
+export DOTNET_TREATWARNINGSASERRORS="true"
 
 # Kubectl configuration
 source <(kubectl completion bash)
