@@ -64,6 +64,7 @@ dev_tools() {
         typst
         trippy
         gping
+        step-cli
         # We don't use `code`, e.g. C# Dev Kit is only available in M$ version
         visual-studio-code-bin:aur
         tailscale
