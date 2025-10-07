@@ -158,6 +158,7 @@ alias ls='eza -l --color=auto'
 alias ff='fzf'
 alias cat='bat'
 alias n='nvim'
+alias step='step-cli'
 alias tree='ls -aR | grep ":$" | perl -pe "s/:$//;s/[^-][^\/]*\//    /g;s/^    (\S)/└── \1/;s/(^    |    (?= ))/│   /g;s/    (\S)/└── \1/"'
 
 # Tool activations
