@@ -65,6 +65,7 @@ dev_tools() {
         trippy
         gping
         step-cli
+        nix:extra
         # We don't use `code`, e.g. C# Dev Kit is only available in M$ version
         visual-studio-code-bin:aur
         tailscale
@@ -233,16 +234,46 @@ install_rustdesk() {
 configure_docker() {
     echo "========================================"
     echo "Configuring Docker..."
-    
+
     echo "Starting and enabling Docker service..."
     sudo systemctl start docker.service
     sudo systemctl enable docker.service
-    
+
     echo "Adding current user to docker group..."
     sudo usermod -aG docker $USER
-    
+
     echo "Docker configuration complete!"
     echo "Note: You may need to log out and back in for group changes to take effect."
+    echo "========================================"
+}
+
+# Function to configure Nix
+configure_nix() {
+    echo "========================================"
+    echo "Configuring Nix..."
+
+    # Create nix config directory if it doesn't exist
+    if [ ! -d ~/.config/nix ]; then
+        echo "Creating nix config directory..."
+        mkdir -p ~/.config/nix
+    else
+        echo "Nix config directory already exists"
+    fi
+
+    # Configure nix experimental features
+    NIX_CONF=~/.config/nix/nix.conf
+    if [ ! -f "$NIX_CONF" ] || ! grep -q "experimental-features = nix-command flakes" "$NIX_CONF"; then
+        echo "Enabling nix experimental features (nix-command and flakes)..."
+        echo "experimental-features = nix-command flakes" > "$NIX_CONF"
+    else
+        echo "Nix experimental features already configured"
+    fi
+
+    # Enable and start nix-daemon service
+    echo "Enabling and starting nix-daemon service..."
+    sudo systemctl enable --now nix-daemon.service
+
+    echo "Nix configuration complete!"
     echo "========================================"
 }
 
@@ -292,6 +323,11 @@ configure_tools() {
     echo "----------------------------------------"
     echo "Configuring Docker"
     configure_docker
+    echo "----------------------------------------"
+
+    echo "----------------------------------------"
+    echo "Configuring Nix"
+    configure_nix
     echo "----------------------------------------"
 
     echo "----------------------------------------"
