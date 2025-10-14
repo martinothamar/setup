@@ -49,6 +49,7 @@ dev_tools() {
     # Define packages with their repositories (format: package:repo or just package for default repo)
     PACKAGES=(
         ghostty
+        fastfetch
         fzf
         github-cli
         zoxide
@@ -66,6 +67,7 @@ dev_tools() {
         gping
         step-cli
         nix:extra
+        direnv
         # We don't use `code`, e.g. C# Dev Kit is only available in M$ version
         visual-studio-code-bin:aur
         tailscale
@@ -165,6 +167,7 @@ alias tree='ls -aR | grep ":$" | perl -pe "s/:$//;s/[^-][^\/]*\//    /g;s/^    (
 # Tool activations
 eval "\$(zoxide init bash)"
 eval "\$(mise activate bash)"
+eval "\$(direnv hook bash)"
 
 # Dotnet configuration
 export PATH="\$PATH:\$HOME/.dotnet"
@@ -172,10 +175,15 @@ export PATH="\$PATH:\$HOME/.dotnet/tools"
 export DOTNET_ROOT="\$HOME/.dotnet"
 export DOTNET_TREATWARNINGSASERRORS="true"
 
+# Build PS1 from scratch with SHLVL prefix and optional nix suffix
+export PS1="[\$SHLVL:\u@\h \W]\\\\$ "
+
 # Kubectl configuration
 source <(kubectl completion bash)
 alias k=kubectl
 complete -o default -F __start_kubectl k
+
+fastfetch
 $CONFIG_END
 EOF
     
