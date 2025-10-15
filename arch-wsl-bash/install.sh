@@ -1,26 +1,12 @@
-#!/bin/bash 
+#!/bin/bash
 
-# CachyOS Dev Environment Setup Script
-REPO="cachyos-extra-znver4"
-
-# Function to configure paru
-configure_paru() {
-    echo "========================================"
-    echo "Configuring paru..."
-    if grep -q "^#BottomUp" /etc/paru.conf; then
-        sudo sed -i 's/^#BottomUp/BottomUp/' /etc/paru.conf
-        echo "Enabled BottomUp in paru.conf"
-    else
-        echo "BottomUp already enabled or not found in paru.conf"
-    fi
-    echo "========================================"
-}
+REPO="extra"
 
 # Function to update system packages
 update_system() {
     echo "========================================"
     echo "Updating system packages..."
-    paru -Syu --noconfirm --needed
+    sudo pacman -Syu --noconfirm --needed
     echo "========================================"
 }
 
@@ -33,14 +19,6 @@ create_bash_login() {
     echo "========================================"
 }
 
-# Function to install base tools
-base_tools() {
-    echo "========================================"
-    echo "Installing base tools..."
-    paru -S --noconfirm --needed chromium
-    echo "========================================"
-}
-
 # Function to install development tools
 dev_tools() {
     echo "========================================"
@@ -48,7 +26,6 @@ dev_tools() {
     
     # Define packages with their repositories (format: package:repo or just package for default repo)
     PACKAGES=(
-        ghostty
         fastfetch
         fzf
         github-cli
@@ -57,6 +34,8 @@ dev_tools() {
         eza
         fd
         bat
+        less:core
+        which:core
         htop
         btop
         ncdu
@@ -67,16 +46,13 @@ dev_tools() {
         trippy
         gping
         step-cli
-        nix:extra
+        nix
         direnv
-        # We don't use `code`, e.g. C# Dev Kit is only available in M$ version
-        visual-studio-code-bin:aur
-        tailscale
         docker
         docker-buildx
         docker-compose
         lazydocker
-        kubectl:extra
+        kubectl
         kubectx
         k9s
         bob
@@ -97,9 +73,9 @@ dev_tools() {
         fi
         
         # Check if package is installed (use package name only, no repo prefix)
-        if paru -Qi ${package} &>/dev/null; then
+        if sudo pacman -Qi ${package} &>/dev/null; then
             # Package is installed, check if it needs updates
-            if paru -Qu ${package} &>/dev/null; then
+            if sudo pacman -Qu ${package} &>/dev/null; then
                 # Package has updates available
                 packages_to_install+=("${repo}/${package}")
             fi
@@ -112,7 +88,7 @@ dev_tools() {
 
     if [ ${#packages_to_install[@]} -gt 0 ]; then
         echo "Installing/updating packages: ${packages_to_install[*]}"
-        paru -S --noconfirm --needed "${packages_to_install[@]}"
+        sudo pacman -S --noconfirm --needed "${packages_to_install[@]}"
     else
         echo "All arch repo development tools are already installed and up-to-date"
     fi
@@ -141,8 +117,8 @@ install_lazyvim() {
 # Function to configure bash
 configure_bash() {
     echo "========================================"
-    CONFIG_START="# === CachyOS Dev Setup Config START ==="
-    CONFIG_END="# === CachyOS Dev Setup Config END ==="
+    CONFIG_START="# === Arch Dev Setup Config START ==="
+    CONFIG_END="# === Arch Dev Setup Config END ==="
     
     # Remove existing configuration if it exists
     if grep -q "$CONFIG_START" ~/.bashrc; then
@@ -189,53 +165,6 @@ $CONFIG_END
 EOF
     
     echo "Bash configuration updated. Run 'source ~/.bashrc' or restart your terminal to apply changes."
-    echo "========================================"
-}
-
-# Function to install RustDesk
-install_rustdesk() {
-    echo "========================================"
-    echo "Installing RustDesk..."
-    
-    # Check if RustDesk is already installed
-    if paru -Qi rustdesk &>/dev/null; then
-        echo "RustDesk already installed, skipping..."
-        echo "========================================"
-        return
-    fi
-    
-    # Create temporary directory
-    TEMP_DIR=$(mktemp -d)
-    cd "$TEMP_DIR"
-    
-    # Get latest release info from GitHub API
-    echo "Fetching latest RustDesk release..."
-    LATEST_VERSION=$(curl -s https://api.github.com/repos/rustdesk/rustdesk/releases/latest | grep '"tag_name"' | sed 's/.*"tag_name": "\([^"]*\)".*/\1/')
-    
-    if [ -z "$LATEST_VERSION" ]; then
-        echo "Failed to fetch latest version for rustdesk" >&2
-        exit 1
-    fi
-    
-    PACKAGE_NAME="rustdesk-${LATEST_VERSION}-0-x86_64.pkg.tar.zst"
-    DOWNLOAD_URL="https://github.com/rustdesk/rustdesk/releases/download/${LATEST_VERSION}/${PACKAGE_NAME}"
-    
-    echo "Downloading RustDesk ${LATEST_VERSION}..."
-    if curl -L -o "$PACKAGE_NAME" "$DOWNLOAD_URL"; then
-        echo "Installing RustDesk package..."
-        paru -U --noconfirm "./$PACKAGE_NAME"
-        echo "RustDesk installation completed"
-    else
-        echo "Failed to download RustDesk package"
-        return 1
-    fi
-    
-    # Clean up
-    cd - &>/dev/null
-    rm -rf "$TEMP_DIR"
-
-    echo "Rustdesk installed!"
-    echo "Remember, we need to set a master password and enable direct IP access to use within tailscale"
     echo "========================================"
 }
 
@@ -340,13 +269,6 @@ configure_tools() {
     echo "----------------------------------------"
 
     echo "----------------------------------------"
-    echo "Configuring and connecting to Tailscale"
-    sudo systemctl enable --now tailscaled
-    sleep 1
-    sudo tailscale up
-    echo "----------------------------------------"
-
-    echo "----------------------------------------"
     echo "Configuring nvim using bob"
     bob use stable
     echo "----------------------------------------"
@@ -370,12 +292,11 @@ configure_tools() {
     echo "----------------------------------------"
 
     echo "----------------------------------------"
-    echo "Configuring git and github-cli"
+    echo "Configuring git"
     git config --global user.name "Martin Othamar"
     git config --global user.email "martin@othamar.net"
     git config --global init.defaultBranch main
     git config --global push.autoSetupRemote true
-    gh auth login
     echo "----------------------------------------"
     echo "========================================"
 }
@@ -383,13 +304,10 @@ configure_tools() {
 # Main installation function
 install_all() {
     echo "Setting up development environment on CachyOS..."
-    configure_paru
     update_system
     create_bash_login
-    base_tools
     dev_tools
     install_lazyvim
-    install_rustdesk
     configure_bash
     configure_tools
     echo "Development environment setup complete!"
