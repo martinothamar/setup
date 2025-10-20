@@ -36,6 +36,7 @@ dev_tools() {
         bat
         less:core
         which:core
+        make:core
         htop
         btop
         ncdu
@@ -54,6 +55,8 @@ dev_tools() {
         lazydocker
         kubectl
         kubectx
+        helm
+        fluxcd
         k9s
         bob
         mise
