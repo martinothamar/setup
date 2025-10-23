@@ -37,6 +37,7 @@ User settings
 ```json
 {
     "editor.renderWhitespace": "all",
+    "editor.minimap.enabled": false,
     "[csharp]": {
         "editor.defaultFormatter": "csharpier.csharpier-vscode"
     },

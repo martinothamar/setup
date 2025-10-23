@@ -53,6 +53,8 @@ dev_tools() {
         docker-buildx
         docker-compose
         lazydocker
+        jq
+        yq
         kubectl
         kubectx
         helm
