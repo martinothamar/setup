@@ -48,6 +48,7 @@ dev_tools() {
     
     # Define packages with their repositories (format: package:repo or just package for default repo)
     PACKAGES=(
+        vim
         ghostty
         fastfetch
         fzf
@@ -157,6 +158,8 @@ configure_bash() {
     cat >> ~/.bashrc << EOF
 
 $CONFIG_START
+export EDITOR="vim"
+
 # Tool aliases
 alias ls='eza -l --color=auto'
 alias ff='fzf'
