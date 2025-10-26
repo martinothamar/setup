@@ -326,6 +326,7 @@ git:
   paging:
     colorArg: always
     pager: delta --dark --paging=never --syntax-theme base16-256 -s
+  ignoreWhitespaceInDiffView: true
 $CONFIG_END
 EOF
 
