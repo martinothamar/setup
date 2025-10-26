@@ -30,6 +30,8 @@ dev_tools() {
         fastfetch
         fzf
         github-cli
+        lazygit
+        git-delta
         zoxide
         ripgrep
         eza
@@ -223,6 +225,48 @@ configure_nix() {
     echo "========================================"
 }
 
+# Function to configure lazygit
+configure_lazygit() {
+    echo "========================================"
+    echo "Configuring lazygit..."
+
+    # Create lazygit config directory if it doesn't exist
+    if [ ! -d ~/.config/lazygit ]; then
+        echo "Creating lazygit config directory..."
+        mkdir -p ~/.config/lazygit
+    else
+        echo "Lazygit config directory already exists"
+    fi
+
+    CONFIG_FILE=~/.config/lazygit/config.yml
+    CONFIG_START="# === LazyGit Config START ==="
+    CONFIG_END="# === LazyGit Config END ==="
+
+    # Remove existing configuration if it exists
+    if [ -f "$CONFIG_FILE" ] && grep -q "$CONFIG_START" "$CONFIG_FILE"; then
+        echo "Updating existing lazygit configuration..."
+        # Use sed to remove everything between the markers
+        sed -i "/$CONFIG_START/,/$CONFIG_END/d" "$CONFIG_FILE"
+    else
+        echo "Adding lazygit configuration..."
+        # Create the file if it doesn't exist
+        touch "$CONFIG_FILE"
+    fi
+
+    # Add the configuration
+    cat >> "$CONFIG_FILE" << EOF
+$CONFIG_START
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never --syntax-theme base16-256 -s
+$CONFIG_END
+EOF
+
+    echo "Lazygit configuration complete!"
+    echo "========================================"
+}
+
 # Function to install dotnet
 install_dotnet() {
     echo "========================================"
@@ -274,6 +318,11 @@ configure_tools() {
     echo "----------------------------------------"
     echo "Configuring Nix"
     configure_nix
+    echo "----------------------------------------"
+
+    echo "----------------------------------------"
+    echo "Configuring LazyGit"
+    configure_lazygit
     echo "----------------------------------------"
 
     echo "----------------------------------------"
