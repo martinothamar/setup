@@ -26,6 +26,7 @@ dev_tools() {
 
   # Define packages with their repositories (format: package:repo or just package for default repo)
   PACKAGES=(
+    base-devel:core
     vim
     fastfetch
     fzf
