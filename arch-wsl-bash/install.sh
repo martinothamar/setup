@@ -180,6 +180,35 @@ EOF
   echo "========================================"
 }
 
+configure_claudemd() {
+  echo "========================================"
+  echo "Configuring Claude global instructions..."
+
+  # Create .claude directory if it doesn't exist
+  mkdir -p ~/.claude
+
+  # Write the configuration
+  cat >~/.claude/CLAUDE.md <<'EOF'
+IMPORTANT:
+- In all interactions, be extremely concise and sacrifice grammar for the sake of concision
+- Be direct and straightforward in all responses
+- Avoid overly positive or enthusiastic language
+- Challenge assumptions and point out potential issues or flaws
+- Provide constructive criticism
+- Verify assumptions before proceeding
+
+Code should:
+- Be defensive
+- Fail early
+- Be perfomant
+  - Avoid unneeded work and allocations
+  - Non-pessimize
+EOF
+
+  echo "Claude configuration complete!"
+  echo "========================================"
+}
+
 # Function to configure Docker
 configure_docker() {
   echo "========================================"
@@ -357,6 +386,11 @@ configure_tools() {
   git config --global user.email "martin@othamar.net"
   git config --global init.defaultBranch main
   git config --global push.autoSetupRemote true
+  echo "----------------------------------------"
+
+  echo "----------------------------------------"
+  echo "Configuring Claude"
+  configure_claudemd
   echo "----------------------------------------"
   echo "========================================"
 }
