@@ -43,6 +43,9 @@ User settings
     },
     "[xml]": {
         "editor.defaultFormatter": "csharpier.csharpier-vscode"
-    }
+    },
+    "remote.autoForwardPortsSource": "hybrid",
+    "zig.zls.enabled": "on",
+    "rust-analyzer.inlayHints.typeHints.enable": false
 }
 ```
