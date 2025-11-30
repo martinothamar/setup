@@ -34,6 +34,7 @@ dev_tools() {
     github-cli
     lazygit
     git-delta
+    difftastic
     zoxide
     ripgrep
     eza
@@ -197,12 +198,14 @@ IMPORTANT:
 - Provide constructive criticism
 - Verify assumptions before proceeding
 
-Code should:
+IMPORTANT CODE CHARACTERISTICS:
 - Be defensive
 - Fail early
 - Be perfomant
   - Avoid unneeded work and allocations
   - Non-pessimize
+- Comments should explain _why_ something is done, never _what_ is being done
+  - Avoid obvious comments, we only want comments that explain non-obvious reasoning
 EOF
 
   echo "Claude configuration complete!"
@@ -289,8 +292,7 @@ configure_lazygit() {
 $CONFIG_START
 git:
   paging:
-    colorArg: always
-    pager: delta --dark --paging=never --syntax-theme base16-256 -s
+    externalDiffCommand: difft --color=always
   ignoreWhitespaceInDiffView: true
 $CONFIG_END
 EOF
@@ -386,6 +388,7 @@ configure_tools() {
   git config --global user.email "martin@othamar.net"
   git config --global init.defaultBranch main
   git config --global push.autoSetupRemote true
+  git config --global rebase.updateRefs true
   echo "----------------------------------------"
 
   echo "----------------------------------------"
