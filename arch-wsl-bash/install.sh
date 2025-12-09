@@ -301,6 +301,26 @@ EOF
   echo "========================================"
 }
 
+# Function to configure k9s
+configure_k9s() {
+  echo "========================================"
+  echo "Configuring k9s..."
+
+  # Create k9s config directory if it doesn't exist
+  mkdir -p ~/.config/k9s
+
+  # Download flux.yaml plugin
+  echo "Downloading flux.yaml plugin..."
+  curl -fsSL https://raw.githubusercontent.com/derailed/k9s/master/plugins/flux.yaml \
+    -o ~/.config/k9s/plugins.yaml
+
+  # Fix duplicate shortcut conflict: trace plugin uses Shift-P which conflicts with k9s builtin
+  sed -i 's/shortCut: Shift-P/shortCut: Shift-O/' ~/.config/k9s/plugins.yaml
+
+  echo "k9s configuration complete!"
+  echo "========================================"
+}
+
 # Function to install dotnet
 install_dotnet() {
   echo "========================================"
@@ -357,6 +377,11 @@ configure_tools() {
   echo "----------------------------------------"
   echo "Configuring LazyGit"
   configure_lazygit
+  echo "----------------------------------------"
+
+  echo "----------------------------------------"
+  echo "Configuring k9s"
+  configure_k9s
   echo "----------------------------------------"
 
   echo "----------------------------------------"
