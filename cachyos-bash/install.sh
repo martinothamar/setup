@@ -376,13 +376,32 @@ configure_k9s() {
   # Create k9s config directory if it doesn't exist
   mkdir -p ~/.config/k9s
 
-  # Download flux.yaml plugin
-  echo "Downloading flux.yaml plugin..."
-  curl -fsSL https://raw.githubusercontent.com/derailed/k9s/master/plugins/flux.yaml \
-    -o ~/.config/k9s/plugins.yaml
-
-  # Fix duplicate shortcut conflict: trace plugin uses Shift-P which conflicts with k9s builtin
-  sed -i 's/shortCut: Shift-P/shortCut: Shift-O/' ~/.config/k9s/plugins.yaml
+  # Custom flux plugin - single Shift-R for reconcile with --with-source
+  cat >~/.config/k9s/plugins.yaml <<'EOF'
+plugins:
+  reconcile-hr:
+    shortCut: Shift-R
+    confirm: false
+    description: Flux reconcile --with-source
+    scopes:
+      - helmreleases
+    command: bash
+    background: false
+    args:
+      - -c
+      - flux reconcile helmrelease --context $CONTEXT -n $NAMESPACE $NAME --with-source | less -K
+  reconcile-ks:
+    shortCut: Shift-R
+    confirm: false
+    description: Flux reconcile --with-source
+    scopes:
+      - kustomizations
+    command: bash
+    background: false
+    args:
+      - -c
+      - flux reconcile kustomization --context $CONTEXT -n $NAMESPACE $NAME --with-source | less -K
+EOF
 
   echo "k9s configuration complete!"
   echo "========================================"
