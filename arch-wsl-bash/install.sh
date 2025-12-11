@@ -173,6 +173,9 @@ source <(kubectl completion bash)
 alias k=kubectl
 complete -o default -F __start_kubectl k
 
+# Krew configuration
+export PATH="\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH"
+
 fastfetch
 $CONFIG_END
 EOF
@@ -321,6 +324,31 @@ configure_k9s() {
   echo "========================================"
 }
 
+# Function to install kubectl krew
+install_krew() {
+  echo "========================================"
+  echo "Installing kubectl krew..."
+
+  if [ -d "${KREW_ROOT:-$HOME/.krew}" ] && command -v kubectl-krew &>/dev/null; then
+    echo "krew already installed, skipping..."
+    echo "========================================"
+    return
+  fi
+
+  (
+    set -x; cd "$(mktemp -d)" &&
+    OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+    KREW="krew-${OS}_${ARCH}" &&
+    curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+    tar zxvf "${KREW}.tar.gz" &&
+    ./"${KREW}" install krew
+  )
+
+  echo "krew installation complete!"
+  echo "========================================"
+}
+
 # Function to install dotnet
 install_dotnet() {
   echo "========================================"
@@ -382,6 +410,11 @@ configure_tools() {
   echo "----------------------------------------"
   echo "Configuring k9s"
   configure_k9s
+  echo "----------------------------------------"
+
+  echo "----------------------------------------"
+  echo "Installing kubectl krew"
+  install_krew
   echo "----------------------------------------"
 
   echo "----------------------------------------"
