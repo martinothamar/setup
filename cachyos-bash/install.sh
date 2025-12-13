@@ -279,6 +279,23 @@ install_rustdesk() {
   echo "========================================"
 }
 
+# Function to configure SSH server
+configure_sshd() {
+  echo "========================================"
+  echo "Configuring SSH server..."
+
+  # Install openssh if not present
+  if ! paru -Qi openssh &>/dev/null; then
+    paru -S --noconfirm --needed openssh
+  fi
+
+  # Enable and start sshd
+  sudo systemctl enable --now sshd.service
+
+  echo "SSH server configured and running!"
+  echo "========================================"
+}
+
 # Function to configure Docker
 configure_docker() {
   echo "========================================"
@@ -505,6 +522,11 @@ configure_tools() {
   sudo systemctl enable --now tailscaled
   sleep 1
   sudo tailscale up
+  echo "----------------------------------------"
+
+  echo "----------------------------------------"
+  echo "Configuring SSH server"
+  configure_sshd
   echo "----------------------------------------"
 
   echo "----------------------------------------"
