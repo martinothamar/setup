@@ -43,6 +43,7 @@ dev_tools() {
     less:core
     which:core
     make:core
+    openssh:core
     htop
     btop
     ncdu
