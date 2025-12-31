@@ -191,6 +191,7 @@ configure_claudemd() {
 
   # Create .claude directory if it doesn't exist
   mkdir -p ~/.claude
+  mkdir -p ~/.claude/commands
 
   # Write the configuration
   cat >~/.claude/CLAUDE.md <<'EOF'
@@ -210,6 +211,32 @@ IMPORTANT CODE CHARACTERISTICS:
   - Non-pessimize
 - Comments should explain _why_ something is done, never _what_ is being done
   - Avoid obvious comments, we only want comments that explain non-obvious reasoning
+EOF
+
+  # Install slash commands
+  cat >~/.claude/commands/interview.md <<'EOF'
+---
+description: Interview me about the plan
+argument-hint: [plan]
+model: opus
+---
+
+Read the plan file $1 thoroughly before starting. Look up and read any files, references, or external resources mentioned in the plan to build full context.
+
+Interview me in detail using AskUserQuestionTool about:
+- Technical implementation details
+- UI & UX considerations
+- Concerns and edge cases
+- Tradeoffs and alternatives
+
+Focus on non-obvious questions that require deeper thinking.
+
+After every 2-3 rounds of questions, update the plan file with:
+- Clarified requirements from my answers
+- Decisions made
+- New constraints or considerations discovered
+
+Continue interviewing until comprehensive, then write the final spec to the file.
 EOF
 
   echo "Claude configuration complete!"
