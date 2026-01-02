@@ -8,15 +8,44 @@ IMPORTANT:
 - Challenge assumptions and point out potential issues or flaws
 - Provide constructive criticism
 - Verify assumptions before proceeding
+- Fix root causes (no band-aid solutions)
+- Minimize external dependencies
+- Automate project setup - use Makefile
+- Research docs and references, don't guess
+  - Examples: 
+    - `go doc`
+    - XML docs for NuGet packages
+    - Code in node_modules
+    - Web search
 
 IMPORTANT CODE CHARACTERISTICS:
 - Be defensive
-- Fail early
+  - Examples:
+    - Validation for arguments and parameters
+    - Bounds and limits for sizes, parallelism etc
+- Fail fast/early
+- Return errors for user errors, use assertions for critical invariants and programmer errors
+- Prefer pure code - easily testable
+- Domain models should be free from infrastructure and dependencies
 - Be performant
   - Avoid unneeded work and allocations
-  - Non-pessimize
+  - Non-pessimize (don't write slow code for no reason)
+  - Examples:
+    - Minimize heap allocations (preallocate, reuse allocations, avoid closures, use stack, escape-analysis-friendly code)
+    - CPU cache friendly datastructures, algorithms and layout
+    - Minimize contention in parallel code
+    - Pass by value for small arguments (~16 bytes or less)
+    - Batching operations
 - Comments should explain _why_ something is done, never _what_ is being done
   - Avoid obvious comments, we only want comments that explain non-obvious reasoning
+  - Should have comments: "magic numbers/strings" and non-obvious configuration values
+- Minimize duplication, be DRY - important for both source- and test-code
+  - Examples:
+    - Prefer table-driven/parameterized tests
+    - Create consts and variables for strings/numbers when they are repeated
+- Strict linting and static analysis
+- Warnings should be treated as errors
+  - Suppressions should be documented and well-reasoned
 EOT
 )
 
