@@ -3,6 +3,14 @@
 # CachyOS Dev Environment Setup Script
 REPO="cachyos-extra-znver4"
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+COMMON_AI_TOOLS="${SCRIPT_DIR}/../common/ai-tools-config.sh"
+if [ ! -f "$COMMON_AI_TOOLS" ]; then
+  echo "Missing shared AI tools config: $COMMON_AI_TOOLS" >&2
+  exit 1
+fi
+. "$COMMON_AI_TOOLS"
+
 # Function to configure paru
 configure_paru() {
   echo "========================================"
@@ -198,64 +206,6 @@ $CONFIG_END
 EOF
 
   echo "Bash configuration updated. Run 'source ~/.bashrc' or restart your terminal to apply changes."
-  echo "========================================"
-}
-
-configure_claudemd() {
-  echo "========================================"
-  echo "Configuring Claude global instructions..."
-
-  # Create .claude directory if it doesn't exist
-  mkdir -p ~/.claude
-  mkdir -p ~/.claude/commands
-
-  # Write the configuration
-  cat >~/.claude/CLAUDE.md <<'EOF'
-IMPORTANT:
-- In all interactions, be extremely concise and sacrifice grammar for the sake of concision
-- Be direct and straightforward in all responses
-- Avoid overly positive or enthusiastic language
-- Challenge assumptions and point out potential issues or flaws
-- Provide constructive criticism
-- Verify assumptions before proceeding
-
-IMPORTANT CODE CHARACTERISTICS:
-- Be defensive
-- Fail early
-- Be perfomant
-  - Avoid unneeded work and allocations
-  - Non-pessimize
-- Comments should explain _why_ something is done, never _what_ is being done
-  - Avoid obvious comments, we only want comments that explain non-obvious reasoning
-EOF
-
-  # Install slash commands
-  cat >~/.claude/commands/interview.md <<'EOF'
----
-description: Interview me about the plan
-argument-hint: [plan]
-model: opus
----
-
-Read the plan file $1 thoroughly before starting. Look up and read any files, references, or external resources mentioned in the plan to build full context.
-
-Interview me in detail using AskUserQuestionTool about:
-- Technical implementation details
-- UI & UX considerations
-- Concerns and edge cases
-- Tradeoffs and alternatives
-
-Focus on non-obvious questions that require deeper thinking.
-
-After every 2-3 rounds of questions, update the plan file with:
-- Clarified requirements from my answers
-- Decisions made
-- New constraints or considerations discovered
-
-Continue interviewing until comprehensive, then write the final spec to the file.
-EOF
-
-  echo "Claude configuration complete!"
   echo "========================================"
 }
 
@@ -591,7 +541,15 @@ configure_tools() {
 
   echo "----------------------------------------"
   echo "Configuring Claude"
-  configure_claudemd
+  configure_claude
+  echo "----------------------------------------"
+  echo "----------------------------------------"
+  echo "Configuring Codex"
+  configure_codex
+  echo "----------------------------------------"
+  echo "----------------------------------------"
+  echo "Configuring OpenCode"
+  configure_opencode
   echo "----------------------------------------"
   echo "========================================"
 }
