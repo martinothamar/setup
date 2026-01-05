@@ -2,7 +2,7 @@
 
 COMMON_ASSISTANT_INSTRUCTIONS=$(cat <<'EOT'
 IMPORTANT:
-- In all interactions, be extremely concise and sacrifice grammar for the sake of concision
+- In all interactions, be extremely concise
 - Be direct and straightforward in all responses
 - Avoid overly positive or enthusiastic language
 - Challenge assumptions and point out potential issues or flaws
@@ -10,13 +10,6 @@ IMPORTANT:
 - Verify assumptions before proceeding
 - Fix root causes (no band-aid solutions)
 - Minimize external dependencies
-- Automate project setup - use Makefile
-- Research docs and references, don't guess
-  - Examples: 
-    - `go doc`
-    - XML docs for NuGet packages
-    - Code in node_modules
-    - Web search
 
 IMPORTANT CODE CHARACTERISTICS:
 - Be defensive
@@ -57,8 +50,6 @@ Interview me in detail about:
 - UI & UX considerations
 - Concerns and edge cases
 - Tradeoffs and alternatives
-
-Use your user interaction tool (e.g. AskUserQuestionTool in Claude Code) to ask questions and wait for my response.
 
 Focus on non-obvious questions that require deeper thinking.
 
