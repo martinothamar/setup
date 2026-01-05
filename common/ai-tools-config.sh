@@ -116,6 +116,13 @@ configure_claude() {
 }
 EOT
 
+  # Install ralph-wiggum plugin for iterative AI loops
+  if command -v claude &>/dev/null; then
+    if ! grep -q ralph-wiggum ~/.claude/settings.json 2>/dev/null; then
+      claude plugin install ralph-wiggum --scope user 2>/dev/null || true
+    fi
+  fi
+
   echo "Claude configuration complete!"
   echo "========================================"
 }
