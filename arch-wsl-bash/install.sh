@@ -155,6 +155,9 @@ configure_bash() {
 $CONFIG_START
 export EDITOR="vim"
 
+# Local bin for user scripts
+export PATH="\$HOME/.local/bin:\$PATH"
+
 # Tool aliases
 alias ls='eza -l --color=auto'
 alias ff='fzf'

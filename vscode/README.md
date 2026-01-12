@@ -36,6 +36,7 @@ code --install-extension jnoortheen.nix-ide
 User settings
 ```json
 {
+    "extensions.ignoreRecommendations": true,
     "editor.renderWhitespace": "all",
     "editor.minimap.enabled": false,
     "[csharp]": {
@@ -46,6 +47,7 @@ User settings
     },
     "remote.autoForwardPortsSource": "hybrid",
     "zig.zls.enabled": "on",
-    "rust-analyzer.inlayHints.typeHints.enable": false
+    "rust-analyzer.inlayHints.typeHints.enable": false,
+    "dotnet.solution.autoOpen": "false"
 }
 ```
