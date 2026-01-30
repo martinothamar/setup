@@ -154,6 +154,8 @@ web_search = "cached"
 unified_exec = true
 apply_patch_freeform = true
 shell_snapshot = true
+collab = true
+collaboration_modes = true
 EOT
 
   echo "Codex configuration complete!"
