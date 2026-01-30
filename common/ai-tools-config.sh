@@ -37,6 +37,7 @@ IMPORTANT CODE CHARACTERISTICS:
     - Prefer table-driven/parameterized tests
     - Create consts and variables for strings/numbers when they are repeated
 - Strict linting and static analysis
+  - Don't suppress lints or warnings without a very good reason
 - Warnings should be treated as errors
   - Suppressions should be documented and well-reasoned
 EOT
@@ -50,13 +51,14 @@ Interview me in detail about:
 - UI & UX considerations
 - Concerns and edge cases
 - Tradeoffs and alternatives
+- Testing strategies
 
-Focus on non-obvious questions that require deeper thinking.
-
-After every 2-3 rounds of questions, update the plan file with:
-- Clarified requirements from my answers
-- Decisions made
-- New constraints or considerations discovered
+IMPORTANT:
+- Focus on non-obvious but material and important questions that require deeper thinking
+- Focus on high-level outcomes, not low-level implementation details
+- After every round of questions, update the plan file with based on answers given
+- Update the plan inline, in the respective sections that made you think to ask the individual questions
+- Make sure the plan stays cohesive and well-structured
 
 Continue interviewing until comprehensive, then write the final spec to the file.
 EOT
@@ -116,12 +118,6 @@ configure_claude() {
 }
 EOT
 
-  # Install ralph-wiggum plugin for iterative AI loops
-  if command -v claude &>/dev/null; then
-    if ! grep -q ralph-wiggum ~/.claude/settings.json 2>/dev/null; then
-      claude plugin install ralph-wiggum --scope user 2>/dev/null || true
-    fi
-  fi
 
   echo "Claude configuration complete!"
   echo "========================================"
@@ -152,13 +148,11 @@ tool_output_token_limit = 25000
 # Formula: 273000 - (tool_output_token_limit + 15000)
 # With tool_output_token_limit=25000 => 273000 - (25000 + 15000) = 233000
 model_auto_compact_token_limit = 233000
+web_search = "cached"
 
 [features]
-ghost_commit = false
 unified_exec = true
 apply_patch_freeform = true
-web_search_request = true
-skills = true
 shell_snapshot = true
 EOT
 
