@@ -47,7 +47,9 @@ User settings
     },
     "remote.autoForwardPortsSource": "hybrid",
     "zig.zls.enabled": "on",
+    "dotnet.solution.autoOpen": "false",
     "rust-analyzer.inlayHints.typeHints.enable": false,
-    "dotnet.solution.autoOpen": "false"
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.checkOnSave": true
 }
 ```
