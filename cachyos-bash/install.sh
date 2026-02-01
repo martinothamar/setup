@@ -173,6 +173,7 @@ export EDITOR="vim"
 
 # Local bin for user scripts
 export PATH="\$HOME/.local/bin:\$PATH"
+export PATH="\$HOME/.cargo/bin:\$PATH"
 
 # Tool aliases
 alias ls='eza -l --color=auto'
