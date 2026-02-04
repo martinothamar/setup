@@ -1,6 +1,7 @@
 #!/bin/bash
 
-COMMON_ASSISTANT_INSTRUCTIONS=$(cat <<'EOT'
+COMMON_ASSISTANT_INSTRUCTIONS=$(
+  cat <<'EOT'
 IMPORTANT:
 - In all interactions, be extremely concise
 - Be direct and straightforward in all responses
@@ -43,7 +44,8 @@ IMPORTANT CODE CHARACTERISTICS:
 EOT
 )
 
-INTERVIEW_COMMAND_CONTENT=$(cat <<'EOT'
+INTERVIEW_COMMAND_CONTENT=$(
+  cat <<'EOT'
 Read the plan file $1 thoroughly before starting. Look up and read any files, references, or external resources mentioned in the plan to build full context.
 
 Interview me in detail about:
@@ -118,7 +120,6 @@ configure_claude() {
 }
 EOT
 
-
   echo "Claude configuration complete!"
   echo "========================================"
 }
@@ -156,6 +157,7 @@ apply_patch_freeform = true
 shell_snapshot = true
 collab = true
 collaboration_modes = true
+steer=true
 EOT
 
   echo "Codex configuration complete!"
