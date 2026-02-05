@@ -103,7 +103,7 @@ configure_claude() {
     "---" \
     "description: Interview me about the plan" \
     "argument-hint: [plan]" \
-    "model: claude-opus-4-5" \
+    "model: claude-opus-4-6" \
     "---"
 
   backup_if_exists ~/.claude/settings.json
@@ -142,7 +142,7 @@ configure_codex() {
   backup_if_exists ~/.codex/config.toml
 
   cat >~/.codex/config.toml <<'EOT'
-model = "gpt-5.2-codex"
+model = "gpt-5.3-codex"
 model_reasoning_effort = "high"
 tool_output_token_limit = 25000
 # Leave room for native compaction near the 272-273k context window.
@@ -176,7 +176,7 @@ configure_opencode() {
   write_interview_prompt ~/.config/opencode/command/interview.md \
     "---" \
     "description: Interview me about the plan" \
-    "model: anthropic/claude-opus-4-5" \
+    "model: anthropic/claude-opus-4-6" \
     "---"
 
   backup_if_exists ~/.config/opencode/opencode.json
@@ -184,7 +184,7 @@ configure_opencode() {
   cat >~/.config/opencode/opencode.json <<'EOT'
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-opus-4-5",
+  "model": "anthropic/claude-opus-4-6",
   "permission": {
     "webfetch": "allow"
   }
