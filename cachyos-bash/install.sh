@@ -357,7 +357,8 @@ configure_lazygit() {
 $CONFIG_START
 git:
   paging:
-    externalDiffCommand: difft --color=always
+    colorArg: always
+    pager: delta --dark --paging=never --side-by-side --line-numbers-left-format="" --line-numbers-right-format=""
   ignoreWhitespaceInDiffView: true
 $CONFIG_END
 EOF
