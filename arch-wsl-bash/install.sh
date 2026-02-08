@@ -278,7 +278,7 @@ $CONFIG_START
 git:
   paging:
     colorArg: always
-    pager: delta --dark --paging=never --side-by-side --line-numbers-left-format="" --line-numbers-right-format=""
+    pager: delta --dark --paging=never --line-numbers-left-format="" --line-numbers-right-format=""
   ignoreWhitespaceInDiffView: true
 $CONFIG_END
 EOF
