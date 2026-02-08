@@ -207,6 +207,11 @@ return {
           },
         },
         sources = {
+          -- Show dotfiles in file search, grep, and explorer.
+          -- Gitignored files stay hidden (fd/rg default behavior).
+          files = { hidden = true },
+          grep = { hidden = true },
+          explorer = { hidden = true },
           git_diff = {
             -- Default to file-level results instead of per-hunk entries, and request full context.
             group = true,
