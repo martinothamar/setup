@@ -90,6 +90,31 @@ write_interview_prompt() {
   printf '\n%s\n' "$INTERVIEW_COMMAND_CONTENT" >>"$path"
 }
 
+install_ai_tools() {
+  echo "========================================"
+  echo "Installing/updating AI coding tools..."
+
+  if command -v claude &>/dev/null; then
+    echo "Updating Claude Code..."
+    claude update || echo "Claude update failed (may already be latest)"
+  else
+    echo "Installing Claude Code..."
+    npm install -g @anthropic-ai/claude-code@latest
+  fi
+
+  echo "Installing/updating Codex CLI..."
+  npm install -g @openai/codex@latest
+
+  echo "Installing/updating Copilot CLI..."
+  npm install -g @github/copilot@latest
+
+  echo "Installing/updating OpenCode..."
+  npm install -g opencode-ai@latest
+
+  echo "AI tools installation complete!"
+  echo "========================================"
+}
+
 configure_claude() {
   echo "========================================"
   echo "Configuring Claude global instructions..."
@@ -176,7 +201,7 @@ configure_opencode() {
   write_interview_prompt ~/.config/opencode/command/interview.md \
     "---" \
     "description: Interview me about the plan" \
-    "model: anthropic/claude-opus-4-6" \
+    "model: openai/gpt-5.3-codex" \
     "---"
 
   backup_if_exists ~/.config/opencode/opencode.json
@@ -184,7 +209,18 @@ configure_opencode() {
   cat >~/.config/opencode/opencode.json <<'EOT'
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-opus-4-6",
+  "model": "openai/gpt-5.3-codex",
+  "provider": {
+    "openai": {
+      "models": {
+        "gpt-5.3-codex": {
+          "options": {
+            "reasoningEffort": "high"
+          }
+        }
+      }
+    }
+  },
   "permission": {
     "webfetch": "allow"
   }
@@ -192,5 +228,39 @@ configure_opencode() {
 EOT
 
   echo "OpenCode configuration complete!"
+  echo "========================================"
+}
+
+configure_copilot() {
+  echo "========================================"
+  echo "Configuring Copilot global instructions..."
+
+  mkdir -p ~/.copilot
+  mkdir -p ~/.copilot/agents
+
+  printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.copilot/copilot-instructions.md
+
+  backup_if_exists ~/.copilot/config.json
+
+  cat >~/.copilot/config.json <<'EOT'
+{
+  "model": "gpt-5.3-codex",
+  "reasoning_effort": "high"
+}
+EOT
+
+  # Copilot CLI doesn't support custom slash commands yet (github/copilot-cli#618).
+  # Use an agent file as a workaround for the interview workflow.
+  cat >~/.copilot/agents/interview.agent.md <<'EOT'
+---
+name: interview
+description: Interview me about a plan file
+tools: ["read", "edit", "search"]
+---
+
+EOT
+  printf '%s\n' "$INTERVIEW_COMMAND_CONTENT" >>~/.copilot/agents/interview.agent.md
+
+  echo "Copilot configuration complete!"
   echo "========================================"
 }

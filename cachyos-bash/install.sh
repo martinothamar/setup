@@ -547,6 +547,11 @@ configure_tools() {
   echo "----------------------------------------"
 
   echo "----------------------------------------"
+  echo "Installing/updating AI tools"
+  install_ai_tools
+  echo "----------------------------------------"
+
+  echo "----------------------------------------"
   echo "Configuring Claude"
   configure_claude
   echo "----------------------------------------"
@@ -557,6 +562,10 @@ configure_tools() {
   echo "----------------------------------------"
   echo "Configuring OpenCode"
   configure_opencode
+  echo "----------------------------------------"
+  echo "----------------------------------------"
+  echo "Configuring Copilot"
+  configure_copilot
   echo "----------------------------------------"
   echo "========================================"
 }
