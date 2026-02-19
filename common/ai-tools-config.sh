@@ -180,7 +180,7 @@ web_search = "cached"
 unified_exec = true
 apply_patch_freeform = true
 shell_snapshot = true
-collab = true
+multi_agent = true
 collaboration_modes = true
 steer=true
 EOT
