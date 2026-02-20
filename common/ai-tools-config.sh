@@ -101,6 +101,61 @@ write_interview_prompt() {
   printf '\n%s\n' "$INTERVIEW_COMMAND_CONTENT" >>"$path"
 }
 
+# install_skills TARGET_DIR REPO_URL REPO_PREFIX SKILL...
+install_skills() {
+  local target_dir="${1-}"
+  local repo_url="${2-}"
+  local repo_prefix="${3-}"
+  if [ -z "$target_dir" ] || [ -z "$repo_url" ] || [ -z "$repo_prefix" ]; then
+    echo "install_skills: missing required arguments" >&2
+    return 1
+  fi
+  shift 3
+  local skills=("$@")
+  if [ "${#skills[@]}" -eq 0 ]; then
+    echo "install_skills: no skills specified" >&2
+    return 1
+  fi
+
+  mkdir -p "$target_dir"
+
+  local tmp_dir
+  tmp_dir=$(mktemp -d)
+  # shellcheck disable=SC2064
+  trap "rm -rf '$tmp_dir'" RETURN
+
+  echo "Fetching skills from $repo_url..."
+  if ! git clone --depth 1 --filter=blob:none --no-checkout \
+      "$repo_url" "$tmp_dir/repo" 2>/dev/null; then
+    echo "Warning: failed to clone $repo_url" >&2
+    return 1
+  fi
+
+  local sparse_paths=()
+  for skill in "${skills[@]}"; do
+    sparse_paths+=("$repo_prefix/$skill")
+  done
+
+  (
+    cd "$tmp_dir/repo"
+    git sparse-checkout init --cone
+    git sparse-checkout set "${sparse_paths[@]}"
+    git checkout 2>/dev/null
+  )
+
+  for skill in "${skills[@]}"; do
+    local src="$tmp_dir/repo/$repo_prefix/$skill"
+    local dst="$target_dir/$skill"
+    if [ -d "$src" ]; then
+      rm -rf "$dst"
+      cp -r "$src" "$dst"
+      echo "Installed skill: $skill -> $dst"
+    else
+      echo "Warning: skill '$skill' not found in $repo_url" >&2
+    fi
+  done
+}
+
 install_ai_tools() {
   echo "========================================"
   echo "Installing/updating AI coding tools..."
@@ -135,6 +190,14 @@ configure_claude() {
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.claude/CLAUDE.md
 
+  install_skills ~/.claude/skills \
+    https://github.com/openai/skills skills/.curated \
+    gh-address-comments gh-fix-ci
+
+  install_skills ~/.claude/skills \
+    https://github.com/anthropics/skills skills \
+    pdf
+
   write_interview_prompt ~/.claude/commands/interview.md \
     "---" \
     "description: Interview me about the plan" \
@@ -168,6 +231,10 @@ configure_codex() {
   mkdir -p ~/.codex/prompts
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.codex/AGENTS.md
+
+  install_skills ~/.codex/skills \
+    https://github.com/openai/skills skills/.curated \
+    gh-address-comments gh-fix-ci pdf
 
   write_interview_prompt ~/.codex/prompts/interview.md \
     "---" \
