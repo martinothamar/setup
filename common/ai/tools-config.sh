@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Absolute path to this file's directory — used to reference bundled skills
+_AI_CONFIG_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
 COMMON_ASSISTANT_INSTRUCTIONS=$(
   cat <<'EOT'
 IMPORTANT BEHAVIORAL RULES:
@@ -10,12 +13,12 @@ IMPORTANT BEHAVIORAL RULES:
 - Provide constructive criticism
 - Verify assumptions before proceeding
 
-IMPORTANT PROGRAMMING RULES: 
+IMPORTANT PROGRAMMING RULES:
 - Minimize code, be DRY
   - Code is liability, logic is an opportunity for bugs
   - We should have as little code as necessary to solve the problem
   - Duplicated logic leads to drift and inconsistency which leads to tech debt, bugs and progress slowdown
-  - Important for both source- and test-code 
+  - Important for both source- and test-code
     - Examples:
       - Reusable functions, fixtures, types
       - Prefer table-driven/parameterized tests
@@ -55,28 +58,6 @@ Some rules can appear to be in contradicting and must be decided on based on dom
 EOT
 )
 
-INTERVIEW_COMMAND_CONTENT=$(
-  cat <<'EOT'
-Read the plan file $1 thoroughly before starting. Look up and read any files, references, or external resources mentioned in the plan to build full context.
-
-Interview me in detail about:
-- Technical implementation details
-- UI & UX considerations
-- Concerns and edge cases
-- Tradeoffs and alternatives
-- Testing strategies
-
-IMPORTANT:
-- Focus on non-obvious but material and important questions that require deeper thinking
-- Focus on high-level outcomes, not low-level implementation details
-- After every round of questions, update the plan file with based on answers given
-- Update the plan inline, in the respective sections that made you think to ask the individual questions
-- Make sure the plan stays cohesive and well-structured
-
-Continue interviewing until comprehensive, then write the final spec to the file.
-EOT
-)
-
 backup_if_exists() {
   local file="${1-}"
   if [ -z "$file" ]; then
@@ -89,16 +70,43 @@ backup_if_exists() {
   fi
 }
 
-write_interview_prompt() {
-  local path="${1-}"
-  if [ -z "$path" ]; then
-    echo "write_interview_prompt: missing path" >&2
+# _dir_checksum DIR — stable content hash of all files under DIR
+_dir_checksum() {
+  (cd "$1" && find . -type f | sort | xargs sha256sum 2>/dev/null | awk '{print $1}' | sha256sum | cut -d' ' -f1)
+}
+
+# install_local_skills TARGET_DIR SRC_DIR SKILL...
+install_local_skills() {
+  local target_dir="${1-}"
+  local src_dir="${2-}"
+  if [ -z "$target_dir" ] || [ -z "$src_dir" ]; then
+    echo "install_local_skills: missing required arguments" >&2
     return 1
   fi
-  shift
+  shift 2
+  local skills=("$@")
+  if [ "${#skills[@]}" -eq 0 ]; then
+    echo "install_local_skills: no skills specified" >&2
+    return 1
+  fi
 
-  printf '%s\n' "$@" >"$path"
-  printf '\n%s\n' "$INTERVIEW_COMMAND_CONTENT" >>"$path"
+  mkdir -p "$target_dir"
+
+  for skill in "${skills[@]}"; do
+    local src="$src_dir/$skill"
+    local dst="$target_dir/$skill"
+    if [ ! -d "$src" ]; then
+      echo "Warning: local skill '$skill' not found at $src" >&2
+      continue
+    fi
+    if [ -d "$dst" ] && [ "$(_dir_checksum "$src")" = "$(_dir_checksum "$dst")" ]; then
+      echo "Skill up to date: $skill"
+      continue
+    fi
+    rm -rf "$dst"
+    cp -r "$src" "$dst"
+    echo "Installed skill: $skill -> $dst"
+  done
 }
 
 # install_skills TARGET_DIR REPO_URL REPO_PREFIX SKILL...
@@ -186,24 +194,15 @@ configure_claude() {
   echo "Configuring Claude global instructions..."
 
   mkdir -p ~/.claude
-  mkdir -p ~/.claude/commands
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.claude/CLAUDE.md
 
-  install_skills ~/.claude/skills \
-    https://github.com/openai/skills skills/.curated \
-    gh-address-comments gh-fix-ci
+  install_local_skills ~/.claude/skills "$_AI_CONFIG_DIR/skills" \
+    gh-address-comments gh-fix-ci interview design-review distsys-review
 
   install_skills ~/.claude/skills \
     https://github.com/anthropics/skills skills \
     pdf
-
-  write_interview_prompt ~/.claude/commands/interview.md \
-    "---" \
-    "description: Interview me about the plan" \
-    "argument-hint: [plan]" \
-    "model: claude-opus-4-6" \
-    "---"
 
   backup_if_exists ~/.claude/settings.json
 
@@ -226,21 +225,17 @@ EOT
 configure_codex() {
   echo "========================================"
   echo "Configuring Codex global instructions..."
-
+  
   mkdir -p ~/.codex
-  mkdir -p ~/.codex/prompts
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.codex/AGENTS.md
 
+  install_local_skills ~/.codex/skills "$_AI_CONFIG_DIR/skills" \
+    gh-address-comments gh-fix-ci interview design-review distsys-review
+
   install_skills ~/.codex/skills \
     https://github.com/openai/skills skills/.curated \
-    gh-address-comments gh-fix-ci pdf
-
-  write_interview_prompt ~/.codex/prompts/interview.md \
-    "---" \
-    "description: Interview me about the plan" \
-    "argument-hint: [plan]" \
-    "---"
+    pdf
 
   backup_if_exists ~/.codex/config.toml
 
@@ -270,17 +265,13 @@ EOT
 configure_opencode() {
   echo "========================================"
   echo "Configuring OpenCode global instructions..."
-
+  
   mkdir -p ~/.config/opencode
-  mkdir -p ~/.config/opencode/command
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.config/opencode/AGENTS.md
 
-  write_interview_prompt ~/.config/opencode/command/interview.md \
-    "---" \
-    "description: Interview me about the plan" \
-    "model: openai/gpt-5.3-codex" \
-    "---"
+  # OpenCode discovers skills from ~/.claude/skills/ automatically,
+  # so all skills installed for Claude are available here too.
 
   backup_if_exists ~/.config/opencode/opencode.json
 
@@ -314,7 +305,6 @@ configure_copilot() {
   echo "Configuring Copilot global instructions..."
 
   mkdir -p ~/.copilot
-  mkdir -p ~/.copilot/agents
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.copilot/copilot-instructions.md
 
@@ -326,18 +316,6 @@ configure_copilot() {
   "reasoning_effort": "high"
 }
 EOT
-
-  # Copilot CLI doesn't support custom slash commands yet (github/copilot-cli#618).
-  # Use an agent file as a workaround for the interview workflow.
-  cat >~/.copilot/agents/interview.agent.md <<'EOT'
----
-name: interview
-description: Interview me about a plan file
-tools: ["read", "edit", "search"]
----
-
-EOT
-  printf '%s\n' "$INTERVIEW_COMMAND_CONTENT" >>~/.copilot/agents/interview.agent.md
 
   echo "Copilot configuration complete!"
   echo "========================================"

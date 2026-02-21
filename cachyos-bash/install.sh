@@ -4,7 +4,7 @@
 REPO="cachyos-extra-znver4"
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-COMMON_AI_TOOLS="${SCRIPT_DIR}/../common/ai-tools-config.sh"
+COMMON_AI_TOOLS="${SCRIPT_DIR}/../common/ai/tools-config.sh"
 if [ ! -f "$COMMON_AI_TOOLS" ]; then
   echo "Missing shared AI tools config: $COMMON_AI_TOOLS" >&2
   exit 1
