@@ -1,6 +1,6 @@
 ---
 name: gh-address-comments
-description: Help address review/issue comments on the open GitHub PR for the current branch using gh CLI; verify gh auth first and prompt the user to authenticate if not logged in.
+description: Help address review/issue comments on the open GitHub PR for the current branch using gh CLI
 metadata:
   short-description: Address comments in a GitHub PR review
 ---
@@ -9,14 +9,19 @@ metadata:
 
 Guide to find the open PR for the current branch and address its comments with gh CLI. Run all `gh` commands with elevated network access.
 
-Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
+Assume `gh` is already authenticated with the required scopes for the target repository.
 
 ## 1) Inspect comments needing attention
-- Run scripts/fetch_comments.py which will print out all the comments and review threads on the PR
+- Run `python "<path-to-skill>/scripts/fetch_comments.py" --actionable` first.
+- If you need outdated threads in the same list (for example to resolve them), add `--outdated`.
+- For agent-friendly structured output, run `python "<path-to-skill>/scripts/fetch_comments.py" --json --actionable`.
+- If bot noise is high, add `--bot-filter coderabbitai` (or other bot logins).
+- If the script reports output was written to `/tmp/fetch_comments_*.md` or `.json`, read from that file instead of expecting inline output.
 
 ## 2) Ask the user for clarification
-- Number all the review threads and comments and provide a short summary of what would be required to apply a fix for it
-- Ask the user which numbered comments should be addressed
+- Use the numbered actionable list from step 1.
+- For any selected thread, inspect full, untruncated content with `python "<path-to-skill>/scripts/fetch_comments.py" --thread THREAD_ID`.
+- Summarize required fixes and ask which numbered items to address.
 
 ## 3) If user chooses comments
 - Apply fixes for the selected comments
@@ -36,9 +41,18 @@ Reply with the numbers to resolve (e.g. "1 2"), "all", or "none".
 **Do not resolve any thread until the user explicitly confirms.** Once confirmed, resolve each selected thread by running:
 
 ```
-python scripts/fetch_comments.py --resolve THREAD_ID [THREAD_ID ...]
+python "<path-to-skill>/scripts/fetch_comments.py" --resolve THREAD_ID [THREAD_ID ...]
 ```
 
+or, if the user confirms list indexes from the actionable output:
+
+```
+python "<path-to-skill>/scripts/fetch_comments.py" --resolve-indexes 1 2 3
+```
+
+If outdated threads were included in the actionable list, pass `--outdated` during resolution as well so indexes still match.
+
 Notes:
-- If gh hits auth/rate issues mid-run, prompt the user to re-authenticate with `gh auth login`, then retry.
-- Threads that are already `isResolved` or `isOutdated` should be excluded from the proposal list.
+- If `gh` commands fail with auth errors, report the failure and stop.
+- Threads that are already `isResolved` should be excluded from the proposal list.
+- Threads with `isOutdated` are excluded by default and can be included explicitly with `--outdated`.

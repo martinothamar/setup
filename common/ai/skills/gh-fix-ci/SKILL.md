@@ -11,7 +11,7 @@ description: "Use when a user asks to debug or fix failing GitHub PR checks that
 Use gh to locate failing PR checks, fetch GitHub Actions logs for actionable failures, summarize the failure snippet, then propose a fix plan and implement after explicit approval.
 - If a plan-oriented skill (for example `create-plan`) is available, use it; otherwise draft a concise plan inline and request approval before implementing.
 
-Prereq: authenticate with the standard GitHub CLI once (for example, run `gh auth login`), then confirm with `gh auth status` (repo + workflow scopes are typically required).
+Assume `gh` is already authenticated with the required scopes for the target repository.
 
 ## Inputs
 
@@ -26,13 +26,10 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
 
 ## Workflow
 
-1. Verify gh authentication.
-   - Run `gh auth status` in the repo.
-   - If unauthenticated, ask the user to run `gh auth login` (ensuring repo + workflow scopes) before proceeding.
-2. Resolve the PR.
+1. Resolve the PR.
    - Prefer the current branch PR: `gh pr view --json number,url`.
    - If the user provides a PR number or URL, use that directly.
-3. Inspect failing checks (GitHub Actions only).
+2. Inspect failing checks (GitHub Actions only).
    - Preferred: run the bundled script (handles gh field drift and job-log fallbacks):
      - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
      - Add `--json` for machine-friendly output.
@@ -44,17 +41,17 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
        - `gh run view <run_id> --log`
      - If the run log says it is still in progress, fetch job logs directly:
        - `gh api "/repos/<owner>/<repo>/actions/jobs/<job_id>/logs" > "<path>"`
-4. Scope non-GitHub Actions checks.
+3. Scope non-GitHub Actions checks.
    - If `detailsUrl` is not a GitHub Actions run, label it as external and only report the URL.
    - Do not attempt Buildkite or other providers; keep the workflow lean.
-5. Summarize failures for the user.
+4. Summarize failures for the user.
    - Provide the failing check name, run URL (if any), and a concise log snippet.
    - Call out missing logs explicitly.
-6. Create a plan.
+5. Create a plan.
    - Use the `create-plan` skill to draft a concise plan and request approval.
-7. Implement after approval.
+6. Implement after approval.
    - Apply the approved plan, summarize diffs/tests, and ask about opening a PR.
-8. Recheck status.
+7. Recheck status.
    - After changes, suggest re-running the relevant tests and `gh pr checks` to confirm.
 
 ## Bundled Resources
