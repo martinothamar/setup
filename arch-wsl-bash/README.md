@@ -7,6 +7,18 @@ wsl --install archlinux
 ```
 
 ```pwsh
+notepad.exe "$env:USERPROFILE/.wslconfig"
+```
+
+.wslconfig content (set based on hardware): 
+
+```
+[wsl2]
+memory=48GB
+swap=0
+```
+
+```pwsh
 # Install PowerShell
 winget install -e --id Microsoft.PowerShell
 # Install VSCode
