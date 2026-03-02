@@ -11,7 +11,10 @@ IMPORTANT BEHAVIORAL RULES:
 - Avoid overly positive or enthusiastic language
 - Challenge assumptions and point out potential issues or flaws
 - Provide constructive criticism
-- Verify assumptions before proceeding
+- Verify assumptions before starting work
+- Understand the context of projects before starting work
+  - Find AGENTS.md, README.md and other documentation in root and relevant child directories and make sure to read them
+  - Ask clarifying questions if needed
 
 IMPORTANT PROGRAMMING RULES:
 - Minimize code, be DRY
@@ -53,52 +56,6 @@ IMPORTANT PROGRAMMING RULES:
   - Don't suppress lints or warnings without a very good reason
 - Warnings should be treated as errors
   - Suppressions should be documented and well-reasoned
-
-TASK-TYPE APPLICABILITY RULES:
-- Use the development workflow below only for implementation/refactor/debug tasks that change code
-- For review-only tasks (code review, design review, architecture review), do not force development workflow sections
-- For review-only tasks, use the review response contract in this file
-
-MANDATORY DEVELOPMENT WORKFLOW RULES:
-- For non-trivial implementation/refactor/debug tasks, use this sequence and do not skip phases:
-  - Phase 0 - Prior-art scan
-    - Search the codebase for existing patterns/utilities before designing new code
-    - Prefer extending/consolidating existing implementations over adding parallel logic
-    - If similar code is not reused, explain why (mismatch, constraints, or risk)
-  - Phase 1 - Design (no code edits yet)
-    - Provide 2-3 viable approaches with tradeoffs: complexity, maintainability, performance, and risk
-    - Recommend one approach and explain why other options were rejected
-    - If requirements are ambiguous or conflicting, ask focused questions before implementation
-  - Phase 2 - Implement
-    - Implement only the selected design
-    - Keep the diff minimal and avoid new duplication
-  - Phase 3 - Simplify
-    - Re-read the code and remove redundancy, dead code, and over-abstractions
-    - Consolidate repeated logic/test setup using helpers or table-driven tests when reuse is real
-  - Phase 4 - Verify
-    - Run relevant checks (lint, tests, static analysis, type checks) before finalizing
-    - If checks cannot run, state exactly which commands were not run and why
-  - Phase 5 - Independent review
-    - Request review from an independent subagent/reviewer when available
-    - Reviewer focus: design quality, duplication, regressions, test gaps, and unnecessary complexity
-    - If subagent/reviewer is unavailable, perform a strict self-review using the same checklist and state this limitation
-- For trivial implementation edits, use a lightweight version of this flow, but still do a self-review and verification pass
-- Never finalize implementation work without an explicit DRY/simplification pass
-
-FINAL RESPONSE CONTRACT (DEVELOPMENT TASKS ONLY):
-- Keep output concise
-- Include:
-  - Design decision summary
-  - Prior-art/reuse summary (what existing code was considered, reused, or intentionally not reused)
-  - Simplification summary (what duplication/redundancy was removed)
-  - Verification summary (commands run + outcome, or precise gaps)
-  - Review summary (reviewer findings, or explicit self-review fallback)
-
-FINAL RESPONSE CONTRACT (REVIEW-ONLY TASKS):
-- Keep output concise
-- Include:
-  - Findings first, ordered by severity, with file/line references when available
-  - Open questions/assumptions
 
 Some rules can appear to be in contradicting and must be decided on based on domain and context, prompt the user if needed.
 EOT
@@ -244,7 +201,7 @@ configure_claude() {
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.claude/CLAUDE.md
 
   install_local_skills ~/.claude/skills "$_AI_CONFIG_DIR/skills" \
-    gh-address-comments gh-fix-ci interview design-review distsys-review
+    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow
 
   install_skills ~/.claude/skills \
     https://github.com/anthropics/skills skills \
@@ -277,7 +234,7 @@ configure_codex() {
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.codex/AGENTS.md
 
   install_local_skills ~/.codex/skills "$_AI_CONFIG_DIR/skills" \
-    gh-address-comments gh-fix-ci interview design-review distsys-review
+    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow
 
   install_skills ~/.codex/skills \
     https://github.com/openai/skills skills/.curated \

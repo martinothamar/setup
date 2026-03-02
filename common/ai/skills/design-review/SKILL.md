@@ -5,7 +5,7 @@ description: "Use when the user asks for a design review, code review focused on
 
 # Design Review
 
-You are doing a **software design review**, not a style review. Focus exclusively on issues that affect correctness, testability, maintainability, or safety.
+You are doing a **software design review**, not a style review. Focus exclusively on issues that affect correctness, testability, maintainability, or safety long term.
 
 ## Process
 
