@@ -231,6 +231,29 @@ EOF
   fi
 
   echo "LazyVim window sizing configuration updated: $CONFIG_FILE"
+
+  # Omnisharp reads config from ~/.omnisharp/omnisharp.json, not from LSP settings.
+  # Both settings are required for .editorconfig diagnostic severity rules to work.
+  OMNISHARP_DIR=~/.omnisharp
+  OMNISHARP_JSON="$OMNISHARP_DIR/omnisharp.json"
+  mkdir -p "$OMNISHARP_DIR"
+
+  if ! cat >"$OMNISHARP_JSON" <<'EOF'; then
+{
+  "FormattingOptions": {
+    "enableEditorConfigSupport": true
+  },
+  "RoslynExtensionsOptions": {
+    "enableAnalyzersSupport": true
+  }
+}
+EOF
+    echo "Failed to write omnisharp configuration: $OMNISHARP_JSON" >&2
+    echo "========================================"
+    return 1
+  fi
+
+  echo "Omnisharp .editorconfig configuration updated: $OMNISHARP_JSON"
   echo "========================================"
 }
 
@@ -376,11 +399,10 @@ configure_lazygit() {
   cat >>"$CONFIG_FILE" <<EOF
 $CONFIG_START
 git:
-  # A very large context approximates full-file diff rendering in LazyGit.
-  diffContextSize: 999999
-  paging:
-    colorArg: always
-    pager: delta --dark --paging=never --line-numbers-left-format="" --line-numbers-right-format=""
+  diffContextSize: 20
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never --line-numbers-left-format="" --line-numbers-right-format=""
   ignoreWhitespaceInDiffView: true
 $CONFIG_END
 EOF
