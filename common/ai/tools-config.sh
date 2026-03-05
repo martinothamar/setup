@@ -192,7 +192,7 @@ configure_codex() {
   backup_if_exists ~/.codex/config.toml
 
   cat >~/.codex/config.toml <<'EOT'
-model = "gpt-5.3-codex"
+model = "gpt-5.4"
 model_reasoning_effort = "high"
 tool_output_token_limit = 25000
 # Leave room for native compaction near the 272-273k context window.
@@ -230,11 +230,11 @@ configure_opencode() {
   cat >~/.config/opencode/opencode.json <<'EOT'
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "openai/gpt-5.3-codex",
+  "model": "openai/gpt-5.4",
   "provider": {
     "openai": {
       "models": {
-        "gpt-5.3-codex": {
+        "gpt-5.4": {
           "options": {
             "reasoningEffort": "high"
           }
@@ -264,7 +264,7 @@ configure_copilot() {
 
   cat >~/.copilot/config.json <<'EOT'
 {
-  "model": "gpt-5.3-codex",
+  "model": "gpt-5.4",
   "reasoning_effort": "high"
 }
 EOT
