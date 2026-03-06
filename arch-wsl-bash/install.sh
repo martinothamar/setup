@@ -65,6 +65,7 @@ dev_tools() {
     step-cli
     nix
     direnv
+    asciinema
     docker
     docker-buildx
     docker-compose
