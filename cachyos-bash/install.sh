@@ -82,7 +82,10 @@ dev_tools() {
     step-cli
     nix:extra
     direnv
+    # Install `agg` separately with: cargo install --git https://github.com/asciinema/agg
     asciinema
+    # `agg` looks for JetBrains Mono first; install a supported monospace font for cast rendering.
+    ttf-jetbrains-mono:extra
     # We don't use `code`, e.g. C# Dev Kit is only available in M$ version
     visual-studio-code-bin:aur
     tailscale
@@ -329,7 +332,9 @@ complete -o default -F __start_kubectl k
 # Krew configuration
 export PATH="\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH"
 
-fastfetch
+if [[ -z \$ASCIINEMA_REC ]]; then
+    fastfetch
+fi
 $CONFIG_END
 EOF
 
