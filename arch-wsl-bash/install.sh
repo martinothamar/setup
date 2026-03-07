@@ -153,6 +153,9 @@ configure_lazyvim() {
 
   PLUGINS_DIR="$NVIM_DIR/lua/plugins"
   CONFIG_FILE="$PLUGINS_DIR/setup-window-sizes.lua"
+  OPTIONS_FILE="$NVIM_DIR/lua/config/options.lua"
+  CLIPBOARD_CONFIG_START="-- === Arch WSL Clipboard Config START ==="
+  CLIPBOARD_CONFIG_END="-- === Arch WSL Clipboard Config END ==="
 
   if ! mkdir -p "$PLUGINS_DIR"; then
     echo "Failed to create LazyVim plugins directory: $PLUGINS_DIR" >&2
@@ -235,6 +238,46 @@ EOF
   fi
 
   echo "LazyVim window sizing configuration updated: $CONFIG_FILE"
+
+  if [ ! -f "$OPTIONS_FILE" ]; then
+    echo "Missing LazyVim options file: $OPTIONS_FILE" >&2
+    echo "========================================"
+    return 1
+  fi
+
+  if grep -Fq -- "$CLIPBOARD_CONFIG_START" "$OPTIONS_FILE"; then
+    if ! sed -i "/$CLIPBOARD_CONFIG_START/,/$CLIPBOARD_CONFIG_END/d" "$OPTIONS_FILE"; then
+      echo "Failed to update LazyVim clipboard configuration: $OPTIONS_FILE" >&2
+      echo "========================================"
+      return 1
+    fi
+  fi
+
+  if ! cat >>"$OPTIONS_FILE" <<'EOF'; then
+
+-- === Arch WSL Clipboard Config START ===
+-- Force the Windows provider in WSL so `unnamedplus` targets the host clipboard.
+vim.g.clipboard = {
+  name = "WslClipboard",
+  copy = {
+    ["+"] = "clip.exe",
+    ["*"] = "clip.exe",
+  },
+  paste = {
+    ["+"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+    ["*"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+  },
+  cache_enabled = 0,
+}
+vim.opt.clipboard = "unnamedplus"
+-- === Arch WSL Clipboard Config END ===
+EOF
+    echo "Failed to write LazyVim clipboard configuration: $OPTIONS_FILE" >&2
+    echo "========================================"
+    return 1
+  fi
+
+  echo "LazyVim clipboard configuration updated: $OPTIONS_FILE"
 
   # Omnisharp reads config from ~/.omnisharp/omnisharp.json, not from LSP settings.
   # Both settings are required for .editorconfig diagnostic severity rules to work.
