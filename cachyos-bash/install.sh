@@ -69,6 +69,7 @@ dev_tools() {
     eza
     fd
     bat
+    poppler
     htop
     btop
     ncdu

@@ -52,6 +52,7 @@ dev_tools() {
     which:core
     make:core
     openssh:core
+    poppler
     htop
     btop
     ncdu
