@@ -62,7 +62,7 @@ aze() {
     return 0
   fi
 
-  AZURE_CONFIG_DIR="$dir" "$@"
+  AZURE_CONFIG_DIR="$dir" command "$@"
 }
 
 az-env() {
@@ -74,8 +74,9 @@ az-run() {
 }
 
 az() {
-  mkdir -p "$AZURE_DEV_CONFIG_DIR" || return $?
-  AZURE_CONFIG_DIR="$AZURE_DEV_CONFIG_DIR" command az "$@"
+  local dir="${AZURE_CONFIG_DIR:-$AZURE_DEV_CONFIG_DIR}"
+  mkdir -p "$dir" || return $?
+  AZURE_CONFIG_DIR="$dir" command az "$@"
 }
 
 azp() {
