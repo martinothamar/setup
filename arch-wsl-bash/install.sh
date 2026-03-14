@@ -22,7 +22,6 @@ update_system() {
 create_bash_login() {
   echo "========================================"
   echo "Creating bash_login file..."
-  # This was needed for `bob` to work, probably a bug there
   touch ~/.bash_login
   echo "========================================"
 }
@@ -80,7 +79,11 @@ dev_tools() {
     helm
     fluxcd
     k9s
-    bob
+    neovim
+    lua
+    luarocks
+    tree-sitter-cli
+    wl-clipboard
     mise
     rustup
     uv
@@ -591,11 +594,6 @@ configure_tools() {
   echo "----------------------------------------"
   echo "Installing kubectl krew"
   install_krew
-  echo "----------------------------------------"
-
-  echo "----------------------------------------"
-  echo "Configuring nvim using bob"
-  bob use stable
   echo "----------------------------------------"
 
   echo "----------------------------------------"

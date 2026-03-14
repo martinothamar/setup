@@ -36,7 +36,6 @@ update_system() {
 create_bash_login() {
   echo "========================================"
   echo "Creating bash_login file..."
-  # This was needed for `bob` to work, probably a bug there
   touch ~/.bash_login
   echo "========================================"
 }
@@ -96,11 +95,14 @@ dev_tools() {
     kubectl:extra
     kubectx
     k9s
-    bob
+    neovim
+    lua
+    luarocks
+    tree-sitter-cli
+    wl-clipboard
     mise
     rustup
     uv
-    wl-clipboard
   )
 
   packages_to_install=()
@@ -520,7 +522,7 @@ git:
   diffContextSize: 20
   pagers:
     - colorArg: always
-      pager: delta --dark --paging=never --side-by-side --line-numbers-left-format="" --line-numbers-right-format=""
+      pager: delta --dark --paging=never --line-numbers-left-format="" --line-numbers-right-format=""
   ignoreWhitespaceInDiffView: true
 $CONFIG_END
 EOF
@@ -672,11 +674,6 @@ configure_tools() {
   echo "----------------------------------------"
   echo "Configuring SSH server"
   configure_sshd
-  echo "----------------------------------------"
-
-  echo "----------------------------------------"
-  echo "Configuring nvim using bob"
-  bob use stable
   echo "----------------------------------------"
 
   echo "----------------------------------------"
