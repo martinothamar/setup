@@ -156,6 +156,10 @@ configure_claude() {
     https://github.com/anthropics/skills skills \
     pdf
 
+  install_skills ~/.claude/skills \
+    https://github.com/slidevjs/slidev skills \
+    slidev
+
   backup_if_exists ~/.claude/settings.json
 
   cat >~/.claude/settings.json <<'EOT'
@@ -188,6 +192,10 @@ configure_codex() {
   install_skills ~/.codex/skills \
     https://github.com/openai/skills skills/.curated \
     pdf
+
+  install_skills ~/.codex/skills \
+    https://github.com/slidevjs/slidev skills \
+    slidev
 
   backup_if_exists ~/.codex/config.toml
 
