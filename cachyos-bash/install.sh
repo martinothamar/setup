@@ -70,6 +70,7 @@ dev_tools() {
     fd
     bat
     poppler
+    bubblewrap
     htop
     btop
     ncdu
