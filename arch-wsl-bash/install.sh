@@ -36,6 +36,8 @@ dev_tools() {
     base-devel:core
     shellcheck
     unzip
+    unrar
+    packer
     vim
     fastfetch
     fzf
