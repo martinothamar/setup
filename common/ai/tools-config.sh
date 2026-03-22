@@ -209,6 +209,10 @@ tool_output_token_limit = 25000
 model_auto_compact_token_limit = 233000
 web_search = "cached"
 
+[agents]
+max_threads = 6
+max_depth = 1
+
 [features]
 unified_exec = true
 apply_patch_freeform = true
@@ -216,6 +220,22 @@ shell_snapshot = true
 multi_agent = true
 collaboration_modes = true
 steer=true
+EOT
+
+  mkdir -p ~/.codex/agents
+  backup_if_exists ~/.codex/agents/reviewer.toml
+
+  cat >~/.codex/agents/reviewer.toml <<'EOT'
+name = "reviewer"
+description = "Code reviewer"
+model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "read-only"
+developer_instructions = """
+Review code like an owner.
+Prioritize correctness, performance, security, behavior regressions, test methodology and code coverage.
+Lead with concrete findings, include reproduction steps when possible, and avoid style-only comments unless they hide a real bug.
+"""
 EOT
 
   echo "Codex configuration complete!"
