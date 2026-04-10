@@ -1,11 +1,11 @@
 ---
 name: "dev-workflow"
-description: "Use for implementation/refactor/debug tasks that change code. Enforces workflow phases and final response contract for development work."
+description: "Use only when the user explicitly invokes the skill by name: dev-workflow. Provides a phased workflow for code implementation, refactoring, debugging, verification, and review."
 ---
 
 # Development Workflow
 
-Use this workflow only for implementation/refactor/debug tasks that change code.
+Use this workflow only when the current user request explicitly invokes `dev-workflow`.
 
 ## Mandatory workflow
 

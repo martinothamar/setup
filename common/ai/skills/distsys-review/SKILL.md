@@ -1,9 +1,11 @@
 ---
 name: "distsys-review"
-description: "Use when the user asks for a distributed systems review, review of a service architecture, or analysis of correctness, reliability, and operational concerns in distributed or networked systems."
+description: "Use only when the user explicitly invokes the skill by name: distsys-review. Provides a distributed systems review focused on correctness, reliability, failure modes, and operability."
 ---
 
 # Distributed Systems Review
+
+Use this skill only when the current user request explicitly invokes `distsys-review`.
 
 You are doing a **distributed systems design review**. Focus on correctness, reliability, and operational concerns that only become visible when multiple processes, nodes, or services interact — especially under failure conditions.
 

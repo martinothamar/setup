@@ -1,9 +1,11 @@
 ---
 name: "design-review"
-description: "Use when the user asks for a design review, code review focused on software design, API design, or code organization. Reviews a module or directory holistically — not style or formatting issues."
+description: "Use only when the user explicitly invokes the skill by name: design-review. Provides a holistic software design review focused on correctness, maintainability, testability, and safety."
 ---
 
 # Design Review
+
+Use this skill only when the current user request explicitly invokes `design-review`.
 
 You are doing a **software design review**, not a style review. Focus exclusively on issues that affect correctness, testability, maintainability, or safety long term.
 
