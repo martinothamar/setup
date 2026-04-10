@@ -323,6 +323,20 @@ configure_pi() {
     https://github.com/slidevjs/slidev skills \
     slidev
 
+  mkdir -p ~/.pi/agent/extensions
+  if [ ! -f "$_AI_CONFIG_DIR/extensions/minimal-mode.ts" ]; then
+    echo "Pi extension not found: $_AI_CONFIG_DIR/extensions/minimal-mode.ts" >&2
+    return 1
+  fi
+  if [ ! -f ~/.pi/agent/extensions/minimal-mode.ts ] || ! cmp -s \
+      "$_AI_CONFIG_DIR/extensions/minimal-mode.ts" \
+      ~/.pi/agent/extensions/minimal-mode.ts; then
+    cp "$_AI_CONFIG_DIR/extensions/minimal-mode.ts" ~/.pi/agent/extensions/minimal-mode.ts
+    echo "Installed Pi extension: ~/.pi/agent/extensions/minimal-mode.ts"
+  else
+    echo "Pi extension up to date: minimal-mode.ts"
+  fi
+
   backup_if_exists ~/.pi/agent/settings.json
 
   cat >~/.pi/agent/settings.json <<'EOT'
