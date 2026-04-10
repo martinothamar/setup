@@ -97,11 +97,11 @@ install_skills() {
   done
 
   (
-    cd "$tmp_dir/repo"
+    cd "$tmp_dir/repo" || exit
     git sparse-checkout init --cone
     git sparse-checkout set "${sparse_paths[@]}"
     git checkout 2>/dev/null
-  )
+  ) || return 1
 
   for skill in "${skills[@]}"; do
     local src="$tmp_dir/repo/$repo_prefix/$skill"
@@ -136,6 +136,9 @@ install_ai_tools() {
 
   echo "Installing/updating OpenCode..."
   npm install -g opencode-ai@latest
+
+  echo "Installing/updating Pi..."
+  npm install -g @mariozechner/pi-coding-agent@latest
 
   echo "AI tools installation complete!"
   echo "========================================"
@@ -298,5 +301,58 @@ configure_copilot() {
 EOT
 
   echo "Copilot configuration complete!"
+  echo "========================================"
+}
+
+configure_pi() {
+  echo "========================================"
+  echo "Configuring Pi global instructions..."
+
+  mkdir -p ~/.pi/agent
+
+  printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.pi/agent/AGENTS.md
+
+  install_local_skills ~/.pi/agent/skills "$_AI_CONFIG_DIR/skills" \
+    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow
+
+  install_skills ~/.pi/agent/skills \
+    https://github.com/openai/skills skills/.curated \
+    pdf
+
+  install_skills ~/.pi/agent/skills \
+    https://github.com/slidevjs/slidev skills \
+    slidev
+
+  backup_if_exists ~/.pi/agent/settings.json
+
+  cat >~/.pi/agent/settings.json <<'EOT'
+{
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4",
+  "defaultThinkingLevel": "high",
+  "theme": "dark",
+  "transport": "sse",
+  "enabledModels": [
+    "openai-codex/gpt-5.4",
+    "anthropic/claude-*",
+    "google/gemini-*"
+  ],
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 16384,
+    "keepRecentTokens": 20000
+  },
+  "retry": {
+    "enabled": true,
+    "maxRetries": 3,
+    "baseDelayMs": 2000,
+    "maxDelayMs": 60000
+  },
+  "steeringMode": "one-at-a-time",
+  "followUpMode": "one-at-a-time"
+}
+EOT
+
+  echo "Pi configuration complete!"
   echo "========================================"
 }

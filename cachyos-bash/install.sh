@@ -732,6 +732,10 @@ configure_tools() {
   echo "Configuring Copilot"
   configure_copilot
   echo "----------------------------------------"
+  echo "----------------------------------------"
+  echo "Configuring Pi"
+  configure_pi
+  echo "----------------------------------------"
   echo "========================================"
 }
 
