@@ -368,7 +368,7 @@ def fetch_job_log(job_id: str, repo_root: Path) -> tuple[str, str]:
     if not repo_slug:
         return "", "Error: unable to resolve repository name for job logs."
     endpoint = f"/repos/{repo_slug}/actions/jobs/{job_id}/logs"
-    returncode, stdout_bytes, stderr = run_gh_command_raw(["api", endpoint], cwd=repo_root)
+    returncode, stdout_bytes, stderr = run_gh_command_raw(["api", "-X", "GET", endpoint], cwd=repo_root)
     if returncode != 0:
         message = (stderr or stdout_bytes.decode(errors="replace")).strip()
         return "", message or "gh api job logs failed"

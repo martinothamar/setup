@@ -9,6 +9,7 @@ description: "Use when a user asks to debug or fix failing GitHub PR checks that
 ## Overview
 
 Use gh to locate failing PR checks, fetch GitHub Actions logs for actionable failures, summarize the failure snippet, then propose a fix plan and implement after explicit approval.
+If you are a sandboxed agent, run 'gh' commands outside the sandbox.
 - If a plan-oriented skill (for example `create-plan`) is available, use it; otherwise draft a concise plan inline and request approval before implementing.
 
 Assume `gh` is already authenticated with the required scopes for the target repository.

@@ -1,0 +1,302 @@
+prefix_rule(
+    pattern = ["gh", "auth", "status"],
+    decision = "allow",
+    justification = "GitHub CLI authentication status is read-only.",
+    match = ["gh auth status"],
+    not_match = ["gh auth login"],
+)
+
+prefix_rule(
+    pattern = ["gh", "agent-task", ["list", "view"]],
+    decision = "allow",
+    justification = "Listing and viewing GitHub agent tasks is read-only.",
+    match = ["gh agent-task list", "gh agent-task view 123"],
+    not_match = ["gh agent-task create test"],
+)
+
+prefix_rule(
+    pattern = ["gh", "api", "-X", "GET"],
+    decision = "allow",
+    justification = "Explicit GET requests through gh api are read-only.",
+    match = ["gh api -X GET repos/OWNER/REPO/actions/jobs/123/logs"],
+    not_match = ["gh api -X POST repos/OWNER/REPO/dispatches"],
+)
+
+prefix_rule(
+    pattern = ["gh", "api", "--method", "GET"],
+    decision = "allow",
+    justification = "Explicit GET requests through gh api are read-only.",
+    match = ["gh api --method GET repos/OWNER/REPO/actions/jobs/123/logs"],
+    not_match = ["gh api --method POST repos/OWNER/REPO/dispatches"],
+)
+
+prefix_rule(
+    pattern = ["gh", "api", "graphql"],
+    decision = "allow",
+    justification = "Required by the gh-address-comments skill to fetch and resolve PR review threads.",
+    match = ["gh api graphql -F query=@- -F owner=OWNER -F repo=REPO -F number=123"],
+)
+
+prefix_rule(
+    pattern = ["gh", "cache", "list"],
+    decision = "allow",
+    justification = "Listing GitHub Actions caches is read-only.",
+    match = ["gh cache list"],
+    not_match = ["gh cache delete --all"],
+)
+
+prefix_rule(
+    pattern = ["gh", "issue", ["list", "status", "view"]],
+    decision = "allow",
+    justification = "Listing and viewing GitHub issues is read-only.",
+    match = ["gh issue list", "gh issue status", "gh issue view 123"],
+    not_match = ["gh issue create", "gh issue edit 123"],
+)
+
+prefix_rule(
+    pattern = ["gh", "label", "list"],
+    decision = "allow",
+    justification = "Listing GitHub labels is read-only.",
+    match = ["gh label list"],
+    not_match = ["gh label create bug"],
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", ["checks", "diff", "list", "status", "view"]],
+    decision = "allow",
+    justification = "Viewing GitHub PR metadata and checks is read-only.",
+    match = [
+        "gh pr checks 123",
+        "gh pr diff 123",
+        "gh pr list",
+        "gh pr status",
+        "gh pr view 123 --json title,body,comments",
+    ],
+    not_match = ["gh pr merge 123", "gh pr edit 123"],
+)
+
+prefix_rule(
+    pattern = ["gh", "release", ["list", "view"]],
+    decision = "allow",
+    justification = "Listing and viewing GitHub releases is read-only.",
+    match = ["gh release list", "gh release view v1.0.0"],
+    not_match = ["gh release create v1.0.0"],
+)
+
+prefix_rule(
+    pattern = ["gh", "project", ["field-list", "item-list", "list", "view"]],
+    decision = "allow",
+    justification = "Listing and viewing GitHub Projects data is read-only.",
+    match = [
+        "gh project field-list 1 --owner cli",
+        "gh project item-list 1 --owner cli",
+        "gh project list --owner cli",
+        "gh project view 1 --owner cli",
+    ],
+    not_match = ["gh project item-edit --id item-id --project-id project-id --field-id field-id --text value"],
+)
+
+prefix_rule(
+    pattern = ["gh", "repo", ["list", "view"]],
+    decision = "allow",
+    justification = "Viewing GitHub repository metadata is read-only.",
+    match = ["gh repo list openai", "gh repo view", "gh repo view openai/codex --json nameWithOwner"],
+    not_match = ["gh repo clone openai/codex"],
+)
+
+prefix_rule(
+    pattern = ["gh", "ruleset", ["check", "list", "view"]],
+    decision = "allow",
+    justification = "Viewing GitHub repository rulesets is read-only.",
+    match = ["gh ruleset check main", "gh ruleset list", "gh ruleset view 123"],
+)
+
+prefix_rule(
+    pattern = ["gh", "run", ["list", "view"]],
+    decision = "allow",
+    justification = "Listing and viewing GitHub Actions runs is read-only.",
+    match = ["gh run list", "gh run view 123 --log"],
+    not_match = ["gh run cancel 123", "gh run rerun 123"],
+)
+
+prefix_rule(
+    pattern = ["gh", "search"],
+    decision = "allow",
+    justification = "GitHub search commands are read-only.",
+    match = ["gh search prs test", "gh search issues test"],
+)
+
+prefix_rule(
+    pattern = ["gh", "status"],
+    decision = "allow",
+    justification = "GitHub CLI status is read-only.",
+    match = ["gh status"],
+)
+
+prefix_rule(
+    pattern = ["gh", "variable", ["get", "list"]],
+    decision = "allow",
+    justification = "Reading GitHub Actions variables is read-only.",
+    match = ["gh variable get NAME", "gh variable list"],
+    not_match = ["gh variable set NAME"],
+)
+
+prefix_rule(
+    pattern = ["gh", "workflow", ["list", "view"]],
+    decision = "allow",
+    justification = "Listing and viewing GitHub Actions workflows is read-only.",
+    match = ["gh workflow list", "gh workflow view ci.yml"],
+    not_match = ["gh workflow run ci.yml"],
+)
+
+prefix_rule(
+    pattern = [
+        ["python", "python3"],
+        "/home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py",
+        ["--resolve", "--resolve-indexes"],
+    ],
+    decision = "prompt",
+    justification = "Resolving PR review threads mutates GitHub state and needs explicit approval.",
+    match = [
+        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --resolve THREAD_ID",
+        "python3 /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --resolve-indexes 1 2",
+    ],
+    not_match = [
+        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --actionable",
+    ],
+)
+
+prefix_rule(
+    pattern = [
+        ["python", "python3"],
+        "/home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py",
+        "--json",
+        ["--resolve", "--resolve-indexes"],
+    ],
+    decision = "prompt",
+    justification = "Resolving PR review threads mutates GitHub state and needs explicit approval.",
+    match = [
+        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --resolve THREAD_ID",
+        "python3 /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --resolve-indexes 1 2",
+    ],
+    not_match = [
+        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --actionable",
+    ],
+)
+
+prefix_rule(
+    pattern = [
+        ["python", "python3"],
+        "/home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py",
+        ["--actionable", "--thread"],
+    ],
+    decision = "allow",
+    justification = "Allow read-only gh-address-comments inspection modes.",
+    match = [
+        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --actionable",
+        "python3 /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --thread THREAD_ID",
+    ],
+)
+
+prefix_rule(
+    pattern = [
+        ["python", "python3"],
+        "/home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py",
+        "--json",
+        ["--actionable", "--thread"],
+    ],
+    decision = "allow",
+    justification = "Allow read-only gh-address-comments JSON inspection modes.",
+    match = [
+        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --actionable",
+        "python3 /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --thread THREAD_ID",
+    ],
+)
+
+prefix_rule(
+    pattern = [
+        ["python", "python3"],
+        "/home/martin/.codex/skills/gh-fix-ci/scripts/inspect_pr_checks.py",
+    ],
+    decision = "allow",
+    justification = "Allow the gh-fix-ci skill script.",
+    match = [
+        "python /home/martin/.codex/skills/gh-fix-ci/scripts/inspect_pr_checks.py --repo .",
+        "python3 /home/martin/.codex/skills/gh-fix-ci/scripts/inspect_pr_checks.py --repo . --json",
+    ],
+)
+
+prefix_rule(
+    pattern = ["studioctl", "auth"],
+    decision = "prompt",
+    justification = "Run studioctl authentication commands manually.",
+    match = ["studioctl auth", "studioctl auth login"],
+    not_match = ["studioctl servers"],
+)
+
+prefix_rule(
+    pattern = ["env", "STUDIOCTL_INTERNAL_DEV=true", "studioctl", "auth"],
+    decision = "prompt",
+    justification = "Run studioctl authentication commands manually.",
+    match = ["env STUDIOCTL_INTERNAL_DEV=true studioctl auth login"],
+    not_match = ["env STUDIOCTL_INTERNAL_DEV=true studioctl servers"],
+)
+
+prefix_rule(
+    pattern = ["env", "STUDIOCTL_INTERNAL_DEV=1", "studioctl", "auth"],
+    decision = "prompt",
+    justification = "Run studioctl authentication commands manually.",
+    match = ["env STUDIOCTL_INTERNAL_DEV=1 studioctl auth login"],
+    not_match = ["env STUDIOCTL_INTERNAL_DEV=1 studioctl servers"],
+)
+
+prefix_rule(
+    pattern = ["STUDIOCTL_INTERNAL_DEV=true", "studioctl", "auth"],
+    decision = "prompt",
+    justification = "Run studioctl authentication commands manually.",
+    match = ["STUDIOCTL_INTERNAL_DEV=true studioctl auth login"],
+    not_match = ["STUDIOCTL_INTERNAL_DEV=true studioctl servers"],
+)
+
+prefix_rule(
+    pattern = ["STUDIOCTL_INTERNAL_DEV=1", "studioctl", "auth"],
+    decision = "prompt",
+    justification = "Run studioctl authentication commands manually.",
+    match = ["STUDIOCTL_INTERNAL_DEV=1 studioctl auth login"],
+    not_match = ["STUDIOCTL_INTERNAL_DEV=1 studioctl servers"],
+)
+
+prefix_rule(
+    pattern = ["studioctl"],
+    decision = "allow",
+    justification = "studioctl is explicitly allowed by local Codex configuration.",
+    match = ["studioctl servers", "studioctl env"],
+)
+
+prefix_rule(
+    pattern = ["env", "STUDIOCTL_INTERNAL_DEV=true", "studioctl"],
+    decision = "allow",
+    justification = "studioctl with STUDIOCTL_INTERNAL_DEV=true is explicitly allowed by local Codex configuration.",
+    match = ["env STUDIOCTL_INTERNAL_DEV=true studioctl servers", "env STUDIOCTL_INTERNAL_DEV=true studioctl env"],
+)
+
+prefix_rule(
+    pattern = ["env", "STUDIOCTL_INTERNAL_DEV=1", "studioctl"],
+    decision = "allow",
+    justification = "studioctl with STUDIOCTL_INTERNAL_DEV=1 is explicitly allowed by local Codex configuration.",
+    match = ["env STUDIOCTL_INTERNAL_DEV=1 studioctl servers", "env STUDIOCTL_INTERNAL_DEV=1 studioctl env"],
+)
+
+prefix_rule(
+    pattern = ["STUDIOCTL_INTERNAL_DEV=true", "studioctl"],
+    decision = "allow",
+    justification = "studioctl with STUDIOCTL_INTERNAL_DEV=true is explicitly allowed by local Codex configuration.",
+    match = ["STUDIOCTL_INTERNAL_DEV=true studioctl servers", "STUDIOCTL_INTERNAL_DEV=true studioctl env"],
+)
+
+prefix_rule(
+    pattern = ["STUDIOCTL_INTERNAL_DEV=1", "studioctl"],
+    decision = "allow",
+    justification = "studioctl with STUDIOCTL_INTERNAL_DEV=1 is explicitly allowed by local Codex configuration.",
+    match = ["STUDIOCTL_INTERNAL_DEV=1 studioctl servers", "STUDIOCTL_INTERNAL_DEV=1 studioctl env"],
+)

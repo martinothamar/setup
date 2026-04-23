@@ -8,6 +8,7 @@ metadata:
 # PR Comment Handler
 
 Guide to find the open PR for the current branch and address its comments with gh CLI. Run all `gh` commands with elevated network access.
+If you are a sandboxed agent, run 'gh' commands outside the sandbox.
 
 Assume `gh` is already authenticated with the required scopes for the target repository.
 

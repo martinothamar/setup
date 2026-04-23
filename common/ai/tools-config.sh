@@ -223,7 +223,14 @@ shell_snapshot = true
 multi_agent = true
 collaboration_modes = true
 steer=true
+
+[tui]
+status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-used"]
 EOT
+
+  mkdir -p ~/.codex/rules
+  backup_if_exists ~/.codex/rules/default.rules
+  cp "$_AI_CONFIG_DIR/codex/rules/default.rules" ~/.codex/rules/default.rules
 
   mkdir -p ~/.codex/agents
   backup_if_exists ~/.codex/agents/reviewer.toml
