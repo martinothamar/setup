@@ -226,6 +226,9 @@ steer=true
 
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-used"]
+
+[tui.keymap.editor]
+insert_newline = ["ctrl-j", "ctrl-m", "enter", "shift-enter", "alt-enter"]
 EOT
 
   mkdir -p ~/.codex/rules
