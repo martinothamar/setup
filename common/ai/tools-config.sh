@@ -190,7 +190,7 @@ configure_codex() {
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.codex/AGENTS.md
 
   install_local_skills ~/.codex/skills "$_AI_CONFIG_DIR/skills" \
-    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow
+    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow semantic-compression
 
   install_skills ~/.codex/skills \
     https://github.com/openai/skills skills/.curated \
