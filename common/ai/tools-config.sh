@@ -144,6 +144,21 @@ install_ai_tools() {
   echo "========================================"
 }
 
+install_smolvm() {
+  echo "========================================"
+  echo "Installing smolvm..."
+
+  if command -v smolvm &>/dev/null; then
+    echo "smolvm already installed: $(command -v smolvm)"
+    smolvm --version || true
+  else
+    curl -sSL https://smolmachines.com/install.sh | bash
+  fi
+
+  echo "smolvm installation complete!"
+  echo "========================================"
+}
+
 configure_claude() {
   echo "========================================"
   echo "Configuring Claude global instructions..."
