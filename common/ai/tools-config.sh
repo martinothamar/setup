@@ -263,30 +263,32 @@ configure_opencode() {
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.config/opencode/AGENTS.md
 
-  # OpenCode discovers skills from ~/.claude/skills/ automatically,
-  # so all skills installed for Claude are available here too.
+  install_local_skills ~/.agents/skills "$_AI_CONFIG_DIR/skills" \
+    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow semantic-compression
 
-  backup_if_exists ~/.config/opencode/opencode.json
+  install_skills ~/.agents/skills \
+    https://github.com/openai/skills skills/.curated \
+    pdf
 
-  cat >~/.config/opencode/opencode.json <<'EOT'
-{
-  "$schema": "https://opencode.ai/config.json",
-  "model": "openai/gpt-5.5",
-  "provider": {
-    "openai": {
-      "models": {
-        "gpt-5.5": {
-          "options": {
-            "reasoningEffort": "high"
-          }
-        }
-      }
-    }
-  },
-  "permission": {
-    "webfetch": "allow"
-  }
-}
+  install_skills ~/.agents/skills \
+    https://github.com/slidevjs/slidev skills \
+    slidev
+
+  mkdir -p ~/.config/opencode/agents
+  backup_if_exists ~/.config/opencode/agents/reviewer.md
+
+  cat >~/.config/opencode/agents/reviewer.md <<'EOT'
+---
+description: Code reviewer
+mode: subagent
+model: openai/gpt-5.5
+permission:
+  edit: deny
+---
+
+Review code like an owner.
+Prioritize correctness, performance, security, behavior regressions, test methodology and code coverage.
+Lead with concrete findings, include reproduction steps when possible, and avoid style-only comments unless they hide a real bug.
 EOT
 
   echo "OpenCode configuration complete!"
