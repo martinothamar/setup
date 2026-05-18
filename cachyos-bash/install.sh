@@ -102,6 +102,7 @@ dev_tools() {
     luarocks
     tree-sitter-cli
     wl-clipboard
+    virglrenderer
     mise
     rustup
     uv
