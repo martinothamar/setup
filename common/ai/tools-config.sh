@@ -240,7 +240,8 @@ collaboration_modes = true
 steer=true
 
 [tui]
-status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-used"]
+status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-used", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "fast-mode"]
+status_line_use_colors = true
 
 [tui.keymap.editor]
 insert_newline = ["ctrl-j", "ctrl-m", "enter", "shift-enter", "alt-enter"]
