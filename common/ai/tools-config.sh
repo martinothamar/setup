@@ -204,6 +204,10 @@ configure_codex() {
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.codex/AGENTS.md
 
+  if command -v rtk &>/dev/null; then
+    rtk init -g --codex
+  fi
+
   install_local_skills ~/.codex/skills "$_AI_CONFIG_DIR/skills" \
     gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow semantic-compression
 

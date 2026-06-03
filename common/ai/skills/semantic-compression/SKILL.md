@@ -1,11 +1,13 @@
 ---
 name: "semantic-compression"
-description: "Use when cleaning up, simplifying, refactoring, reducing duplication, or making code easier to extend, maintain, and understand. Applies Casey Muratori's semantic compression: start from concrete working code, compress repeated meaning only after real examples exist, and avoid speculative abstractions."
+description: "Use when simplifying existing working code by compressing repeated semantics, reducing duplication, or merging parallel code paths. Do not use for broad redesigns, reimplementations, or architecture changes where the target shape is still being decided."
 ---
 
 # Semantic Compression
 
-Use this skill when the current task is to clean up code, simplify code, refactor code, reduce duplication, or improve maintainability, extensibility, or understandability.
+Use this skill when the current task is to simplify existing working code by compressing repeated semantics, reducing duplication, or merging parallel code paths.
+
+Do not use it for broad redesigns, reimplementations, or architecture changes where the target shape is still being decided.
 
 Semantic compression is a bottom-up refactoring discipline. Treat the code like something to compress by meaning, not just by text size: repeated or strongly similar semantics should move through the same code path, while one-off behavior should stay direct and local.
 
@@ -13,6 +15,7 @@ Semantic compression is a bottom-up refactoring discipline. Treat the code like 
 
 - Make code usable before making it reusable.
 - Do not introduce a shared helper, type, interface, class hierarchy, configuration layer, or framework until there are at least two concrete call sites or examples that prove the shared shape.
+- Try compressing first without introducing helper functions. Ask whether similar work can be merged through loops, tables, or reordering.
 - Compress semantics, not characters. Shorter code is not better if it hides the important behavior, couples unrelated cases, or makes debugging harder.
 - Let abstractions emerge from working code. Prefer extracting real repeated data and operations from existing examples over designing speculative "model" objects up front.
 - Keep unique code close to its use. Do not route one-off behavior through generic machinery just so it looks uniform.
@@ -31,9 +34,10 @@ Semantic compression is a bottom-up refactoring discipline. Treat the code like 
    - Notice parallel concepts that drift in lockstep. If two concepts would usually need the same edits, tests, or invariants, they may be one concept with parameters rather than two concepts.
 
 3. Choose the smallest compression.
-   - For repeated calculations or decisions, extract a function with the problem-domain name.
-   - For repeated groups of values that move together, introduce a small data structure or existing local type.
-   - For repeated procedural setup that shares evolving state, consider a small helper object or shared context.
+   - Before adding a helper, type, object, or other construct, check whether repeated work can be made direct by merging control flow, using data tables, or reordering operations.
+   - For repeated calculations or decisions, extract a function with the problem-domain name when direct merging is not enough.
+   - For repeated groups of values that move together, introduce a small data structure or existing local type when plain data or a table is not enough.
+   - For repeated procedural setup that shares evolving state, consider a small helper object or shared context when passing that state through functions would obscure the behavior.
    - Remove pre-counts, duplicated state, and declarations that can drift from the operations they describe; derive them from the concrete steps when possible.
    - For repeated tests, use a table or fixture only when it makes the behavior easier to scan.
    - When a new call site nearly fits an existing helper, decide explicitly whether to use it unchanged, reshape it, layer over or under it, or leave the code local.

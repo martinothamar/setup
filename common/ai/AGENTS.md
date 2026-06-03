@@ -1,65 +1,50 @@
 # AGENTS.md
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+Default workflow for coding tasks. Treat these as preferences, not laws; task-specific instructions and user intent take priority.
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+- State important assumptions when they affect the implementation
+- Stop and ask when something is unclear or ambiguous
+- Challenge flawed approaches, do not validate bad architecture or flawed logic
+- Architecture and design can only be judged with future goals and plans in mind; ask if you dont know
+- Verify all claims (see verification section below)
+- If uncertain and unable to verify in any meaningful way, say "I am not sure" or "I cannot confirm" instead of guessing or agreeing
+- Change and fix code at the appropriate level/layer (ask if unclear)
+- All changes should be tied to goals, plans and desired outcomes
+- Changesets should not include completely unrelated changes unless explicitly asked for
+- Simplicity and readability is important
 
-## 1. Think Before Coding
+Common mistakes to avoid:
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+- Adding validation and fallbacks at the wrong layer, when the invalid/wrong state could be made unrepresentable/impossible at the correct (typically outer) layer instead
+- Leaving behind old or dead code for compatiblity instead of cleaning up doing refactors/compression. Prefer full cleanup
+- Leaving behind old or dead code just because tests call them (tests should also be refactored for new/updated code in that case)
 
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+## Verification
 
-## 2. Simplicity First
+- Define what success looks like before editing when the task is nontrivial
+- Form theories, make statements and decisions, apply code changes and similar based on empirical proof or strong references. Examples:
+  - Standards and specifications if relevant to the topic, e.g. IETF/IEEE/ISO
+  - Online documentation
+  - Relevant code/repositories checked out locally (see references section below)
+  - Bugfixing: 
+    - "red-green" in red-green-refactor, find or build a failing test and then make changes that lead to success
+    - Manual reproduction steps and observed behavior
+    - Telemetry (metrics, logs, traces, output)
+  - Optimization: 
+    - Benchmarking for statistically significant (reproducible) measurements
+    - Profiling (e.g. CPU, memory) for scoping/directing effort
+    - Telemetry (perf counters, metrics, logs, traces)
+- Iterate and make changes in small increments
+- Re-test and re-prove
+- If full verification is impractical, run the lightest useful check and say what remains unverified
 
-**Minimum code that solves the problem. Nothing speculative.**
+## References
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
+References in the form of:
 
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+- Code/third party repositories
+- Documentation, PDFs
 
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+And similar, can be downloaded/cloned to `~/code/reference/`.
+Create the folder if it doesnt exist.
+Make sure to check for existing content there first.
