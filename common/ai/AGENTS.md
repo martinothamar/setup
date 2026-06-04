@@ -16,8 +16,8 @@ Default workflow for coding tasks. Treat these as preferences, not laws; task-sp
 Common mistakes to avoid:
 
 - Adding validation and fallbacks at the wrong layer, when the invalid/wrong state could be made unrepresentable/impossible at the correct (typically outer) layer instead
-- Leaving behind old or dead code for compatiblity instead of cleaning up doing refactors/compression. Prefer full cleanup
-- Leaving behind old or dead code just because tests call them (tests should also be refactored for new/updated code in that case)
+- Leaving behind old or dead code for compatiblity instead of cleaning up doing refactors/compression. If tests/benchmarks are only callers left, refactor or remove them. Prefer full cleanup
+- Filling a proposal, solution or plan with assumptions, caveats, and "if X then Y" branches instead of doing the work to find out. When facts are available, check the code, docs, specs, logs, or other primary sources first, then present specific, concrete plans/solutions based on findings
 
 ## Verification
 
