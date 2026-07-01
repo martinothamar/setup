@@ -308,6 +308,11 @@ configure_opencode() {
         }
       }
     }
+  },
+  "agent": {
+    "title": {
+      "disable": true
+    }
   }
 }
 EOT
