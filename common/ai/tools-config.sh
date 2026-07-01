@@ -2,6 +2,13 @@
 
 # Absolute path to this file's directory — used to reference bundled skills
 _AI_CONFIG_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+_SETUP_ROOT_DIR="$(cd -- "$_AI_CONFIG_DIR/../.." && pwd)"
+_SETUP_ENV_FILE="$_SETUP_ROOT_DIR/.env"
+
+if [ -f "$_SETUP_ENV_FILE" ]; then
+  # shellcheck disable=SC1090
+  . "$_SETUP_ENV_FILE"
+fi
 
 COMMON_ASSISTANT_INSTRUCTIONS_FILE="$_AI_CONFIG_DIR/AGENTS.md"
 if [ ! -f "$COMMON_ASSISTANT_INSTRUCTIONS_FILE" ]; then
@@ -204,10 +211,6 @@ configure_codex() {
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.codex/AGENTS.md
 
-  if command -v rtk &>/dev/null; then
-    rtk init -g --codex
-  fi
-
   install_local_skills ~/.codex/skills "$_AI_CONFIG_DIR/skills" \
     gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow semantic-compression
 
@@ -260,15 +263,11 @@ EOT
 
   cat >~/.codex/agents/reviewer.toml <<'EOT'
 name = "reviewer"
-description = "Code reviewer"
+description = "Reviewer"
 model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
-developer_instructions = """
-Review code like an owner.
-Prioritize correctness, performance, security, behavior regressions, test methodology and code coverage.
-Lead with concrete findings, include reproduction steps when possible, and avoid style-only comments unless they hide a real bug.
-"""
+developer_instructions = "Review according to instructions."
 EOT
 
   echo "Codex configuration complete!"
@@ -282,6 +281,36 @@ configure_opencode() {
   mkdir -p ~/.config/opencode
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.config/opencode/AGENTS.md
+
+  backup_if_exists ~/.config/opencode/opencode.json
+
+  local vllm_base_url="${SETUP_OPENCODE_VLLM_BASE_URL:-http://127.0.0.1:8000/v1}"
+  local vllm_api_key="${SETUP_OPENCODE_VLLM_API_KEY:-local-vllm}"
+
+  cat >~/.config/opencode/opencode.json <<EOT
+{
+  "\$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "vllm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "vLLM local",
+      "options": {
+        "baseURL": "$vllm_base_url",
+        "apiKey": "$vllm_api_key"
+      },
+      "models": {
+        "nvidia/Qwen3.6-27B-NVFP4": {
+          "name": "Qwen3.6 27B NVFP4 local",
+          "limit": {
+            "context": 120000,
+            "output": 8192
+          }
+        }
+      }
+    }
+  }
+}
+EOT
 
   install_local_skills ~/.agents/skills "$_AI_CONFIG_DIR/skills" \
     gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow semantic-compression
@@ -299,16 +328,14 @@ configure_opencode() {
 
   cat >~/.config/opencode/agents/reviewer.md <<'EOT'
 ---
-description: Code reviewer
+description: Reviewer
 mode: subagent
 model: openai/gpt-5.5
 permission:
   edit: deny
 ---
 
-Review code like an owner.
-Prioritize correctness, performance, security, behavior regressions, test methodology and code coverage.
-Lead with concrete findings, include reproduction steps when possible, and avoid style-only comments unless they hide a real bug.
+Review according to instructions.
 EOT
 
   echo "OpenCode configuration complete!"

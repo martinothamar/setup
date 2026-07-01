@@ -53,3 +53,13 @@ User settings
     "rust-analyzer.checkOnSave": true
 }
 ```
+
+.ssh settings for SSH remote
+* Windows: C:\Users\<YourUsername>\.ssh\config
+* Mac / Linux: ~/.ssh/config
+
+```
+Host *
+  ServerAliveInterval 60
+  ServerAliveCountMax 10
+```
