@@ -225,26 +225,9 @@ configure_codex() {
   backup_if_exists ~/.codex/config.toml
 
   cat >~/.codex/config.toml <<'EOT'
-model = "gpt-5.5"
-model_reasoning_effort = "high"
-tool_output_token_limit = 25000
-# Leave room for native compaction near the 272-273k context window.
-# Formula: 273000 - (tool_output_token_limit + 15000)
-# With tool_output_token_limit=25000 => 273000 - (25000 + 15000) = 233000
-model_auto_compact_token_limit = 233000
+model = "gpt-5.6-sol"
+model_reasoning_effort = "xhigh"
 web_search = "cached"
-
-[agents]
-max_threads = 6
-max_depth = 1
-
-[features]
-unified_exec = true
-apply_patch_freeform = true
-shell_snapshot = true
-multi_agent = true
-collaboration_modes = true
-steer=true
 
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-used", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "fast-mode"]
@@ -264,8 +247,8 @@ EOT
   cat >~/.codex/agents/reviewer.toml <<'EOT'
 name = "reviewer"
 description = "Reviewer"
-model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "max"
 sandbox_mode = "read-only"
 developer_instructions = "Review according to instructions."
 EOT
@@ -335,7 +318,8 @@ EOT
 ---
 description: Reviewer
 mode: subagent
-model: openai/gpt-5.5
+model: openai/gpt-5.6-sol
+reasoningEffort: max
 permission:
   edit: deny
 ---
@@ -355,12 +339,12 @@ configure_copilot() {
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.copilot/copilot-instructions.md
 
-  backup_if_exists ~/.copilot/config.json
+  backup_if_exists ~/.copilot/settings.json
 
-  cat >~/.copilot/config.json <<'EOT'
+  cat >~/.copilot/settings.json <<'EOT'
 {
-  "model": "gpt-5.5",
-  "reasoning_effort": "high"
+  "model": "gpt-5.6-sol",
+  "effortLevel": "xhigh"
 }
 EOT
 
@@ -406,12 +390,12 @@ configure_pi() {
   cat >~/.pi/agent/settings.json <<'EOT'
 {
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "high",
+  "defaultModel": "gpt-5.6-sol",
+  "defaultThinkingLevel": "xhigh",
   "theme": "dark",
   "transport": "sse",
   "enabledModels": [
-    "openai-codex/gpt-5.5",
+    "openai-codex/gpt-5.6-sol",
     "anthropic/claude-*",
     "google/gemini-*"
   ],
