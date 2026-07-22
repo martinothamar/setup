@@ -145,7 +145,11 @@ install_ai_tools() {
   npm install -g opencode-ai@latest
 
   echo "Installing/updating Pi..."
-  npm install -g @mariozechner/pi-coding-agent@latest
+  if npm list -g --depth=0 @mariozechner/pi-coding-agent &>/dev/null; then
+    echo "Removing deprecated Pi package..."
+    npm uninstall -g @mariozechner/pi-coding-agent
+  fi
+  npm install -g --ignore-scripts @earendil-works/pi-coding-agent@latest
 
   echo "AI tools installation complete!"
   echo "========================================"
@@ -230,18 +234,8 @@ model_reasoning_effort = "high"
 model_verbosity = "low"
 web_search = "cached"
 
-[features.multi_agent_v2]
-hide_spawn_agent_metadata = false
-tool_namespace = "agents"
-max_concurrent_threads_per_session = 4
-usage_hint_text = """
-Use agent_type = "reviewer" for reviews; its role owns model and reasoning effort.
-Use agent_type = "worker" for implementation and "default" otherwise; omit model and reasoning_effort so they inherit the parent High settings.
-With agent_type, set fork_turns to "none" or a bounded positive number, never "all". Never use Ultra for subagents.
-"""
-
-[agents]
-max_depth = 1
+[features]
+multi_agent_v2 = true
 
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-used", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "fast-mode"]
@@ -379,25 +373,14 @@ configure_pi() {
 
   install_skills ~/.pi/agent/skills \
     https://github.com/openai/skills skills/.curated \
-    pdf
+    pdf playwright
 
   install_skills ~/.pi/agent/skills \
     https://github.com/slidevjs/slidev skills \
     slidev
 
-  mkdir -p ~/.pi/agent/extensions
-  if [ ! -f "$_AI_CONFIG_DIR/extensions/minimal-mode.ts" ]; then
-    echo "Pi extension not found: $_AI_CONFIG_DIR/extensions/minimal-mode.ts" >&2
-    return 1
-  fi
-  if [ ! -f ~/.pi/agent/extensions/minimal-mode.ts ] || ! cmp -s \
-      "$_AI_CONFIG_DIR/extensions/minimal-mode.ts" \
-      ~/.pi/agent/extensions/minimal-mode.ts; then
-    cp "$_AI_CONFIG_DIR/extensions/minimal-mode.ts" ~/.pi/agent/extensions/minimal-mode.ts
-    echo "Installed Pi extension: ~/.pi/agent/extensions/minimal-mode.ts"
-  else
-    echo "Pi extension up to date: minimal-mode.ts"
-  fi
+  # Remove the extension installed by earlier revisions of this setup.
+  rm -f ~/.pi/agent/extensions/minimal-mode.ts
 
   backup_if_exists ~/.pi/agent/settings.json
 
@@ -405,27 +388,9 @@ configure_pi() {
 {
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-sol",
-  "defaultThinkingLevel": "xhigh",
+  "defaultThinkingLevel": "high",
   "theme": "dark",
-  "transport": "sse",
-  "enabledModels": [
-    "openai-codex/gpt-5.6-sol",
-    "anthropic/claude-*",
-    "google/gemini-*"
-  ],
-  "compaction": {
-    "enabled": true,
-    "reserveTokens": 16384,
-    "keepRecentTokens": 20000
-  },
-  "retry": {
-    "enabled": true,
-    "maxRetries": 3,
-    "baseDelayMs": 2000,
-    "maxDelayMs": 60000
-  },
-  "steeringMode": "one-at-a-time",
-  "followUpMode": "one-at-a-time"
+  "transport": "auto"
 }
 EOT
 
