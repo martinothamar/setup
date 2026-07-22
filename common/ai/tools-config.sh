@@ -216,7 +216,7 @@ configure_codex() {
 
   install_skills ~/.codex/skills \
     https://github.com/openai/skills skills/.curated \
-    pdf
+    pdf playwright
 
   install_skills ~/.codex/skills \
     https://github.com/slidevjs/slidev skills \
@@ -226,8 +226,22 @@ configure_codex() {
 
   cat >~/.codex/config.toml <<'EOT'
 model = "gpt-5.6-sol"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
+model_verbosity = "low"
 web_search = "cached"
+
+[features.multi_agent_v2]
+hide_spawn_agent_metadata = false
+tool_namespace = "agents"
+max_concurrent_threads_per_session = 4
+usage_hint_text = """
+Use agent_type = "reviewer" for reviews; its role owns model and reasoning effort.
+Use agent_type = "worker" for implementation and "default" otherwise; omit model and reasoning_effort so they inherit the parent High settings.
+With agent_type, set fork_turns to "none" or a bounded positive number, never "all". Never use Ultra for subagents.
+"""
+
+[agents]
+max_depth = 1
 
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-used", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "fast-mode"]
