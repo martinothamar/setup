@@ -72,6 +72,7 @@ dev_tools() {
     bat
     poppler
     bubblewrap
+    deskflow
     htop
     btop
     ncdu
@@ -762,6 +763,21 @@ EOF
   echo "========================================"
 }
 
+# Function to configure Deskflow
+configure_deskflow() {
+  echo "========================================"
+  echo "Configuring Deskflow..."
+
+  # This CachyOS desktop is connected to the mouse, keyboard, and 1440p monitor;
+  # Deskflow shares those peripherals with the almost-4K work laptop beside it.
+  # Adjust mouse movement to compensate for the different display resolutions.
+  mkdir -p ~/.config/environment.d
+  printf '%s\n' 'DESKFLOW_MOUSE_ADJUSTMENT=2' >~/.config/environment.d/60-deskflow.conf
+
+  echo "Deskflow configuration updated: ~/.config/environment.d/60-deskflow.conf"
+  echo "========================================"
+}
+
 # Function to install RustDesk
 install_rustdesk() {
   echo "========================================"
@@ -1068,6 +1084,11 @@ configure_tools() {
   echo "----------------------------------------"
   echo "Configuring desktop/server mode commands"
   configure_system_modes
+  echo "----------------------------------------"
+
+  echo "----------------------------------------"
+  echo "Configuring Deskflow"
+  configure_deskflow
   echo "----------------------------------------"
 
   echo "----------------------------------------"
