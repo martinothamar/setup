@@ -715,9 +715,10 @@ configure_tmux() {
 set -g mouse on
 set -g history-limit 100000
 setw -g mode-keys vi
-# The high-resolution mouse emits many wheel events, so scroll one line per event.
-bind-key -T copy-mode-vi WheelUpPane select-pane \; send-keys -X -N 1 scroll-up
-bind-key -T copy-mode-vi WheelDownPane select-pane \; send-keys -X -N 1 scroll-down
+# Ghostty emits high-resolution wheel events, so use one line per event there.
+# Keep tmux's default five-line scrolling for every other terminal.
+bind-key -T copy-mode-vi WheelUpPane select-pane \; if-shell -F '#{==:#{client_termname},xterm-ghostty}' 'send-keys -X -N 1 scroll-up' 'send-keys -X -N 5 scroll-up'
+bind-key -T copy-mode-vi WheelDownPane select-pane \; if-shell -F '#{==:#{client_termname},xterm-ghostty}' 'send-keys -X -N 1 scroll-down' 'send-keys -X -N 5 scroll-down'
 EOF
 
   echo "tmux configuration updated: ~/.tmux.conf"
