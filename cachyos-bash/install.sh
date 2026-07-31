@@ -715,6 +715,9 @@ configure_tmux() {
 set -g mouse on
 set -g history-limit 100000
 setw -g mode-keys vi
+# The high-resolution mouse emits many wheel events, so scroll one line per event.
+bind-key -T copy-mode-vi WheelUpPane select-pane \; send-keys -X -N 1 scroll-up
+bind-key -T copy-mode-vi WheelDownPane select-pane \; send-keys -X -N 1 scroll-down
 EOF
 
   echo "tmux configuration updated: ~/.tmux.conf"
