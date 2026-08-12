@@ -577,6 +577,8 @@ configure_tmux() {
 set -g mouse on
 set -g history-limit 100000
 setw -g mode-keys vi
+# Avoid OSC 52 clipboard writes interfering with VS Code's Windows clipboard.
+set -s set-clipboard off
 EOF
 
   echo "tmux configuration updated: ~/.tmux.conf"
