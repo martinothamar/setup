@@ -151,6 +151,13 @@ install_ai_tools() {
   fi
   npm install -g --ignore-scripts @earendil-works/pi-coding-agent@latest
 
+  echo "Installing/updating Herdr..."
+  if command -v herdr &>/dev/null; then
+    herdr update || echo "Herdr update failed (may already be latest)"
+  else
+    curl -fsSL https://herdr.dev/install.sh | sh
+  fi
+
   echo "AI tools installation complete!"
   echo "========================================"
 }
@@ -214,6 +221,12 @@ configure_claude() {
 }
 EOT
 
+  # Re-add the herdr hook entry that the settings.json overwrite above removed
+  # (reports agent state/session refs so herdr can show status and resume panes).
+  if command -v herdr &>/dev/null; then
+    herdr integration install claude
+  fi
+
   echo "Claude configuration complete!"
   echo "========================================"
 }
@@ -271,6 +284,12 @@ model_reasoning_effort = "max"
 sandbox_mode = "read-only"
 developer_instructions = "Review according to instructions."
 EOT
+
+  # Re-add `[features] hooks = true` that the config.toml overwrite above removed
+  # (reports agent state/session refs so herdr can show status and resume panes).
+  if command -v herdr &>/dev/null; then
+    herdr integration install codex
+  fi
 
   echo "Codex configuration complete!"
   echo "========================================"
@@ -368,6 +387,44 @@ configure_copilot() {
 EOT
 
   echo "Copilot configuration complete!"
+  echo "========================================"
+}
+
+configure_herdr() {
+  echo "========================================"
+  echo "Configuring Herdr..."
+
+  mkdir -p ~/.config/herdr
+
+  backup_if_exists ~/.config/herdr/config.toml
+
+  cat >~/.config/herdr/config.toml <<'EOT'
+onboarding = false
+
+[ui]
+agent_panel_sort = "spaces"
+
+[session]
+# Restore workspaces/tabs/panes after a server restart/reboot and resume
+# agent panes into their native conversations (needs the per-agent herdr
+# integrations, installed by configure_claude/configure_codex).
+resume_agents_on_restore = true
+EOT
+
+  # Install the herdr skill so agents can drive herdr (panes, prompts, other
+  # agents) from inside a managed pane. Generated from the installed binary so
+  # it always matches the current version.
+  local skill_dir
+  for skill_dir in ~/.claude/skills/herdr ~/.codex/skills/herdr; do
+    mkdir -p "$skill_dir"
+    herdr --skill >"$skill_dir/SKILL.md"
+    echo "Installed herdr skill: $skill_dir/SKILL.md"
+  done
+
+  # Pick up the new config if a server is already running.
+  herdr server reload-config 2>/dev/null || true
+
+  echo "Herdr configuration complete!"
   echo "========================================"
 }
 

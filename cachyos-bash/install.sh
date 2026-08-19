@@ -1153,6 +1153,10 @@ configure_tools() {
   echo "Configuring Pi"
   configure_pi
   echo "----------------------------------------"
+  echo "----------------------------------------"
+  echo "Configuring Herdr"
+  configure_herdr
+  echo "----------------------------------------"
   echo "========================================"
 }
 

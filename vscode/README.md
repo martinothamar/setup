@@ -39,6 +39,7 @@ User settings
     "extensions.ignoreRecommendations": true,
     "editor.renderWhitespace": "all",
     "editor.minimap.enabled": false,
+    "terminal.integrated.rightClickBehavior": "nothing",
     "[csharp]": {
         "editor.defaultFormatter": "csharpier.csharpier-vscode"
     },
