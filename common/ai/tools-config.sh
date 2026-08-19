@@ -189,6 +189,10 @@ configure_claude() {
     https://github.com/slidevjs/slidev skills \
     slidev
 
+  backup_if_exists ~/.claude/statusline.sh
+  cp "$_AI_CONFIG_DIR/claude/statusline.sh" ~/.claude/statusline.sh
+  chmod +x ~/.claude/statusline.sh
+
   backup_if_exists ~/.claude/settings.json
 
   cat >~/.claude/settings.json <<'EOT'
@@ -201,7 +205,12 @@ configure_claude() {
   },
   "alwaysThinkingEnabled": true,
   "tui": "fullscreen",
-  "model": "claude-fable-5[1m]"
+  "model": "claude-fable-5[1m]",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 0
+  }
 }
 EOT
 
