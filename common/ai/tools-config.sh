@@ -199,7 +199,9 @@ configure_claude() {
       "WebFetch"
     ]
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "tui": "fullscreen",
+  "model": "claude-fable-5[1m]"
 }
 EOT
 
