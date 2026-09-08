@@ -186,7 +186,7 @@ configure_claude() {
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.claude/CLAUDE.md
 
   install_local_skills ~/.claude/skills "$_AI_CONFIG_DIR/skills" \
-    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow
+    semantic-compression
 
   install_skills ~/.claude/skills \
     https://github.com/anthropics/skills skills \
@@ -212,13 +212,29 @@ configure_claude() {
   },
   "alwaysThinkingEnabled": true,
   "tui": "fullscreen",
-  "model": "claude-fable-5[1m]",
+  "model": "claude-fable-5-1[1m]",
+  "effortLevel": "medium",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
     "padding": 0
   }
 }
+EOT
+
+  mkdir -p ~/.claude/agents
+  backup_if_exists ~/.claude/agents/reviewer.md
+
+  cat >~/.claude/agents/reviewer.md <<'EOT'
+---
+name: reviewer
+description: Reviews code according to the provided review instructions.
+disallowedTools: Edit, Write, NotebookEdit
+model: claude-fable-5-1[1m]
+effort: xhigh
+---
+
+Review according to instructions.
 EOT
 
   # Re-add the herdr hook entry that the settings.json overwrite above removed
@@ -240,7 +256,7 @@ configure_codex() {
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.codex/AGENTS.md
 
   install_local_skills ~/.codex/skills "$_AI_CONFIG_DIR/skills" \
-    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow semantic-compression
+    semantic-compression
 
   install_skills ~/.codex/skills \
     https://github.com/openai/skills skills/.curated \
@@ -253,8 +269,8 @@ configure_codex() {
   backup_if_exists ~/.codex/config.toml
 
   cat >~/.codex/config.toml <<'EOT'
-model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model = "gpt-6-astra"
+model_reasoning_effort = "medium"
 model_verbosity = "low"
 web_search = "cached"
 
@@ -279,8 +295,8 @@ EOT
   cat >~/.codex/agents/reviewer.toml <<'EOT'
 name = "reviewer"
 description = "Reviewer"
-model = "gpt-5.6-sol"
-model_reasoning_effort = "max"
+model = "gpt-6-astra"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 developer_instructions = "Review according to instructions."
 EOT
@@ -339,7 +355,7 @@ configure_opencode() {
 EOT
 
   install_local_skills ~/.agents/skills "$_AI_CONFIG_DIR/skills" \
-    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow semantic-compression
+    semantic-compression
 
   install_skills ~/.agents/skills \
     https://github.com/openai/skills skills/.curated \
@@ -356,14 +372,18 @@ EOT
 ---
 description: Reviewer
 mode: subagent
-model: openai/gpt-5.6-sol
-reasoningEffort: max
+model: openai/gpt-6-astra
+reasoningEffort: xhigh
 permission:
   edit: deny
 ---
 
 Review according to instructions.
 EOT
+
+  if command -v herdr &>/dev/null; then
+    herdr integration install opencode
+  fi
 
   echo "OpenCode configuration complete!"
   echo "========================================"
@@ -381,10 +401,14 @@ configure_copilot() {
 
   cat >~/.copilot/settings.json <<'EOT'
 {
-  "model": "gpt-5.6-sol",
-  "effortLevel": "xhigh"
+  "model": "gpt-6-astra",
+  "effortLevel": "medium"
 }
 EOT
+
+  if command -v herdr &>/dev/null; then
+    herdr integration install copilot
+  fi
 
   echo "Copilot configuration complete!"
   echo "========================================"
@@ -407,7 +431,7 @@ agent_panel_sort = "spaces"
 [session]
 # Restore workspaces/tabs/panes after a server restart/reboot and resume
 # agent panes into their native conversations (needs the per-agent herdr
-# integrations, installed by configure_claude/configure_codex).
+# integrations, installed by each tool's configure function).
 resume_agents_on_restore = true
 EOT
 
@@ -436,9 +460,6 @@ configure_pi() {
 
   printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.pi/agent/AGENTS.md
 
-  install_local_skills ~/.pi/agent/skills "$_AI_CONFIG_DIR/skills" \
-    gh-address-comments gh-fix-ci interview design-review distsys-review dev-workflow
-
   install_skills ~/.pi/agent/skills \
     https://github.com/openai/skills skills/.curated \
     pdf playwright
@@ -455,12 +476,16 @@ configure_pi() {
   cat >~/.pi/agent/settings.json <<'EOT'
 {
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
-  "defaultThinkingLevel": "high",
+  "defaultModel": "gpt-6-astra",
+  "defaultThinkingLevel": "medium",
   "theme": "dark",
   "transport": "auto"
 }
 EOT
+
+  if command -v herdr &>/dev/null; then
+    herdr integration install pi
+  fi
 
   echo "Pi configuration complete!"
   echo "========================================"

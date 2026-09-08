@@ -31,13 +31,6 @@ prefix_rule(
 )
 
 prefix_rule(
-    pattern = ["gh", "api", "graphql"],
-    decision = "allow",
-    justification = "Required by the gh-address-comments skill to fetch and resolve PR review threads.",
-    match = ["gh api graphql -F query=@- -F owner=OWNER -F repo=REPO -F number=123"],
-)
-
-prefix_rule(
     pattern = ["gh", "cache", "list"],
     decision = "allow",
     justification = "Listing GitHub Actions caches is read-only.",
@@ -147,83 +140,6 @@ prefix_rule(
     justification = "Listing and viewing GitHub Actions workflows is read-only.",
     match = ["gh workflow list", "gh workflow view ci.yml"],
     not_match = ["gh workflow run ci.yml"],
-)
-
-prefix_rule(
-    pattern = [
-        ["python", "python3"],
-        "/home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py",
-        ["--resolve", "--resolve-indexes"],
-    ],
-    decision = "prompt",
-    justification = "Resolving PR review threads mutates GitHub state and needs explicit approval.",
-    match = [
-        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --resolve THREAD_ID",
-        "python3 /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --resolve-indexes 1 2",
-    ],
-    not_match = [
-        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --actionable",
-    ],
-)
-
-prefix_rule(
-    pattern = [
-        ["python", "python3"],
-        "/home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py",
-        "--json",
-        ["--resolve", "--resolve-indexes"],
-    ],
-    decision = "prompt",
-    justification = "Resolving PR review threads mutates GitHub state and needs explicit approval.",
-    match = [
-        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --resolve THREAD_ID",
-        "python3 /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --resolve-indexes 1 2",
-    ],
-    not_match = [
-        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --actionable",
-    ],
-)
-
-prefix_rule(
-    pattern = [
-        ["python", "python3"],
-        "/home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py",
-        ["--actionable", "--thread"],
-    ],
-    decision = "allow",
-    justification = "Allow read-only gh-address-comments inspection modes.",
-    match = [
-        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --actionable",
-        "python3 /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --thread THREAD_ID",
-    ],
-)
-
-prefix_rule(
-    pattern = [
-        ["python", "python3"],
-        "/home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py",
-        "--json",
-        ["--actionable", "--thread"],
-    ],
-    decision = "allow",
-    justification = "Allow read-only gh-address-comments JSON inspection modes.",
-    match = [
-        "python /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --actionable",
-        "python3 /home/martin/.codex/skills/gh-address-comments/scripts/fetch_comments.py --json --thread THREAD_ID",
-    ],
-)
-
-prefix_rule(
-    pattern = [
-        ["python", "python3"],
-        "/home/martin/.codex/skills/gh-fix-ci/scripts/inspect_pr_checks.py",
-    ],
-    decision = "allow",
-    justification = "Allow the gh-fix-ci skill script.",
-    match = [
-        "python /home/martin/.codex/skills/gh-fix-ci/scripts/inspect_pr_checks.py --repo .",
-        "python3 /home/martin/.codex/skills/gh-fix-ci/scripts/inspect_pr_checks.py --repo . --json",
-    ],
 )
 
 prefix_rule(
