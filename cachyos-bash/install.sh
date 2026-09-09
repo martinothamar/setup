@@ -505,6 +505,9 @@ export EDITOR="vim"
 export PATH="\$HOME/.local/bin:\$PATH"
 export PATH="\$HOME/.cargo/bin:\$PATH"
 
+# Share Rust build artifacts across projects and worktrees.
+export CARGO_TARGET_DIR="\$HOME/.cargo/target"
+
 # Tool aliases
 alias ls='eza -l --color=auto'
 alias ff='fzf'
