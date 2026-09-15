@@ -17,6 +17,13 @@ if [ ! -f "$COMMON_ASSISTANT_INSTRUCTIONS_FILE" ]; then
 fi
 COMMON_ASSISTANT_INSTRUCTIONS="$(cat "$COMMON_ASSISTANT_INSTRUCTIONS_FILE")"
 
+CLAUDE_ASSISTANT_INSTRUCTIONS_FILE="$_AI_CONFIG_DIR/claude/CLAUDE.md"
+if [ ! -f "$CLAUDE_ASSISTANT_INSTRUCTIONS_FILE" ]; then
+  echo "CLAUDE_ASSISTANT_INSTRUCTIONS file not found: $CLAUDE_ASSISTANT_INSTRUCTIONS_FILE" >&2
+  exit 1
+fi
+CLAUDE_ASSISTANT_INSTRUCTIONS="$(cat "$CLAUDE_ASSISTANT_INSTRUCTIONS_FILE")"
+
 backup_if_exists() {
   local file="${1-}"
   if [ -z "$file" ]; then
@@ -183,7 +190,9 @@ configure_claude() {
 
   mkdir -p ~/.claude
 
-  printf '%s\n' "$COMMON_ASSISTANT_INSTRUCTIONS" >~/.claude/CLAUDE.md
+  printf '%s\n\n%s\n' \
+    "$COMMON_ASSISTANT_INSTRUCTIONS" \
+    "$CLAUDE_ASSISTANT_INSTRUCTIONS" >~/.claude/CLAUDE.md
 
   install_local_skills ~/.claude/skills "$_AI_CONFIG_DIR/skills" \
     semantic-compression
