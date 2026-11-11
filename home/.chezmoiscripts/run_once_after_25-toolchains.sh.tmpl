@@ -1,0 +1,21 @@
+{{- if and (ne .chezmoi.os "windows") (not .wsl) -}}
+#!/bin/bash
+# One-time toolchain setup. Go, and rustup on Linux, come from the package manager (GOTOOLCHAIN=auto
+# fetches the Go versions projects ask for). Update with `rustup update` and `dotnetup update`.
+set -euo pipefail
+{{- if eq .chezmoi.os "darwin" }}
+
+# Homebrew's rustup is keg-only; the official installer puts the proxies in ~/.cargo/bin.
+if [ ! -x ~/.cargo/bin/rustup ]; then
+  curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs | sh -s -- -y --no-modify-path
+fi
+PATH="$HOME/.cargo/bin:$PATH"
+{{- end }}
+
+rustup default >/dev/null 2>&1 || rustup default stable
+
+if [ ! -x ~/.dotnetup/dotnetup ]; then
+  curl -fsSL https://aka.ms/dotnetup/get-dotnetup.sh | bash
+fi
+~/.dotnetup/dotnetup sdk install latest --no-progress
+{{ end -}}

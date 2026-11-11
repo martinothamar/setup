@@ -1,0 +1,11 @@
+{{- if and (ne .chezmoi.os "windows") (not .wsl) -}}
+{{- $tag := (gitHubLatestRelease "martinothamar/t3code").TagName -}}
+#!/bin/bash
+# Installs the t3code fork's latest release ({{ $tag }}) with the fork's own installer. The
+# release tag is part of this script, so a new release reruns it.
+set -euo pipefail
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+curl -fsSL https://raw.githubusercontent.com/martinothamar/t3code/{{ $tag }}/scripts/fork/install-desktop.ts -o "$tmp/install-desktop.ts"
+node "$tmp/install-desktop.ts" --version {{ trimPrefix "v" $tag }}
+{{ end -}}

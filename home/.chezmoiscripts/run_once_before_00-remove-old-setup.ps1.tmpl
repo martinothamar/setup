@@ -1,0 +1,51 @@
+{{- if eq .chezmoi.os "windows" -}}
+# TEMPORARY: delete this script once every machine has applied it.
+#
+# Windows side of run_once_before_00-remove-old-setup.sh. By kind, whatever their names: global
+# agent instructions, skills, subagents, slash commands, prompts, rules and hooks of Claude Code and
+# Codex. By name: Copilot CLI's, Pi's and OpenCode's leftovers. Claude Code's and Codex's own
+# settings, logins and history stay, as do skills synced from claude.ai and Codex's bundled .system
+# skills. No Windows machine had hooks in Claude Code's settings.json, so that file is not edited.
+$h = $env:USERPROFILE
+
+function Remove-Paths([string[]] $paths) {
+    foreach ($path in $paths) {
+        if (Test-Path -LiteralPath $path) {
+            Remove-Item -LiteralPath $path -Recurse -Force
+            Write-Host "removed $path"
+        }
+    }
+}
+
+# Every skill in $dir except the names given and dot-directories (.system, .trash).
+function Remove-Skills([string] $dir, [string[]] $keep = @()) {
+    if (-not (Test-Path -LiteralPath $dir)) { return }
+    Get-ChildItem -LiteralPath $dir -Force |
+        Where-Object { -not $_.Name.StartsWith('.') -and $keep -notcontains $_.Name } |
+        ForEach-Object { Remove-Paths $_.FullName }
+}
+
+# Backups of instruction and config files, such as settings.json.bak-20260913-212253.
+function Remove-Backups([string] $dir, [string[]] $names) {
+    if (-not (Test-Path -LiteralPath $dir)) { return }
+    Get-ChildItem -LiteralPath $dir -File -Force |
+        Where-Object { $n = $_.Name; $names | Where-Object { $n -like "$_.bak*" } } |
+        ForEach-Object { Remove-Paths $_.FullName }
+}
+
+# Claude Code
+Remove-Paths "$h\.claude\CLAUDE.md", "$h\.claude\rules", "$h\.claude\statusline.sh", "$h\.claude\agents", "$h\.claude\commands", "$h\.claude\hooks"
+Remove-Backups "$h\.claude" 'CLAUDE.md', 'settings.json', 'statusline.sh'
+Remove-Skills "$h\.claude\skills" 'synced'
+
+# Codex
+Remove-Paths "$h\.codex\AGENTS.md", "$h\.codex\RTK.md", "$h\.codex\agents", "$h\.codex\rules", "$h\.codex\prompts", "$h\.codex\hooks.json"
+Remove-Backups "$h\.codex" 'AGENTS.md', 'config.toml', 'hooks.json'
+Remove-Skills "$h\.codex\skills"
+
+# Skills shared between agents
+Remove-Skills "$h\.agents\skills"
+
+# Copilot CLI, Pi, OpenCode
+Remove-Paths "$h\.copilot", "$h\.pi", "$h\.config\opencode", "$h\.local\share\opencode", "$h\.cache\opencode"
+{{ end -}}

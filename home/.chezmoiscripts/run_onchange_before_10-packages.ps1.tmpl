@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Installs the packages in .chezmoidata/packages.yaml. Reruns when that list changes, and on the
+# next apply after a failure, since chezmoi only records a script that succeeded.
+$ids = @(
+{{- range $i, $id := .packages.windows.winget }}{{ if $i }},{{ end }}
+    {{ $id | quote }}
+{{- end }}
+)
+# Exit codes that mean the package is there: installed, no applicable update, already installed,
+# installed but needs a restart to finish.
+$installed = @(0, -1978335189, -1978335135, -1978334967)
+$failed = @()
+foreach ($id in $ids) {
+    Write-Host "winget: $id"
+    winget install --id $id --exact --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
+    if ($installed -notcontains $LASTEXITCODE) { $failed += "$id (exit $LASTEXITCODE)" }
+}
+if ($failed) {
+    Write-Host "winget failed for: $($failed -join ', ')"
+    exit 1
+}
+{{ end -}}

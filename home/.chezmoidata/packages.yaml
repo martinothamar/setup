@@ -1,0 +1,140 @@
+# Packages each machine kind installs. A change here reruns the install script on the next
+# `chezmoi apply`. Removing a package does not uninstall it.
+packages:
+  pacman:
+    # Every Arch machine: the CachyOS desktop and Arch in WSL.
+    common:
+      - bash-completion
+      - chezmoi
+      - git
+      - github-cli
+      - vim
+      # Command line
+      - bat
+      - btop
+      - direnv
+      - eza
+      - fastfetch
+      - fd
+      - fzf
+      - git-delta
+      - htop
+      - hyperfine
+      - jq
+      - just
+      - lazygit
+      - ncdu
+      - neovim
+      - ripgrep
+      - rsync
+      - tmux
+      - tree
+      - typst
+      - uv
+      - wget
+      - yq
+      - zoxide
+      # Containers
+      - docker
+      - docker-buildx
+      - docker-compose
+      - lazydocker
+      # Ops and work
+      - fluxcd
+      - helm
+      - k9s
+      - kubectl
+      - kubectx
+      - step-cli
+    # CachyOS desktop, through paru (slack-desktop and visual-studio-code-bin are from the AUR).
+    desktop:
+      - nodejs # runs the t3code fork's installer
+      - ghostty
+      - tailscale
+      - visual-studio-code-bin
+      - chromium
+      - slack-desktop
+      - deskflow
+      - go
+      - rustup
+    # Arch in WSL, for work: Azure CLI with separate dev/prod logins (multiaz).
+    wsl:
+      - less
+      - which
+      - openssh
+      - azure-cli
+  darwin:
+    taps:
+      - deskflow/tap
+    brews:
+      - bash
+      - bash-completion@2
+      - chezmoi
+      - git
+      - gh
+      - node # runs the t3code fork's installer
+      - go # rustup comes from rustup.rs, see run_once_after_25-toolchains
+      # Command line
+      - bat
+      - btop
+      - direnv
+      - eza
+      - fastfetch
+      - fd
+      - fzf
+      - git-delta
+      - htop
+      - hyperfine
+      - jq
+      - just
+      - lazygit
+      - ncdu
+      - neovim
+      - python-yq # the same yq as Arch's `yq` package
+      - ripgrep
+      - rsync
+      - tmux
+      - tree
+      - typst
+      - uv
+      - wget
+      - zoxide
+      # Containers
+      - colima
+      - docker
+      - lazydocker
+      - podman
+    # brew bundle adopts apps that were installed by hand.
+    casks:
+      - deskflow/tap/deskflow
+      - ghostty
+      - google-chrome
+      - slack
+      - tailscale-app
+      - visual-studio-code
+  windows:
+    winget:
+      - Git.Git
+      - twpayne.chezmoi
+      - GitHub.cli
+      - OpenJS.NodeJS.LTS # runs the t3code fork's installer
+      - Microsoft.WindowsTerminal
+      - Microsoft.VisualStudioCode
+      - Tailscale.Tailscale
+      - Google.Chrome
+      - SlackTechnologies.Slack
+      - Docker.DockerDesktop
+      - 7zip.7zip
+      - BurntSushi.ripgrep.MSVC
+      - JesseDuffield.lazygit
+      - GoLang.Go
+      - Rustlang.Rustup
+
+vscode:
+  extensions:
+    - ms-vscode-remote.remote-ssh
+    - ms-vscode-remote.remote-ssh-edit
+    - ms-vscode.remote-explorer
+    - pomdtr.excalidraw-editor
+  windows:
+    - ms-vscode-remote.remote-wsl

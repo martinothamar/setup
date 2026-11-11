@@ -1,0 +1,7 @@
+# ~/.bash_profile, managed by chezmoi (github.com/martinothamar/setup).
+{{- if eq .chezmoi.os "darwin" }}
+
+eval "$({{ if eq .chezmoi.arch "arm64" }}/opt/homebrew{{ else }}/usr/local{{ end }}/bin/brew shellenv)"
+{{- end }}
+
+[[ -f ~/.bashrc ]] && . ~/.bashrc

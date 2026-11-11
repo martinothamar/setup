@@ -1,0 +1,16 @@
+{{- $name := promptStringOnce . "name" "Git user name" -}}
+{{- $email := promptStringOnce . "email" "Git email" -}}
+{{- /* `and` stops at the first false value, so .chezmoi.kernel is only read on Linux. */ -}}
+{{- $wsl := and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") -}}
+sourceDir = {{ .chezmoi.workingTree | quote }}
+
+[data]
+name = {{ $name | quote }}
+email = {{ $email | quote }}
+wsl = {{ $wsl }}
+{{- if eq .chezmoi.os "windows" }}
+
+[interpreters.ps1]
+command = "powershell"
+args = ["-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File"]
+{{- end }}

@@ -1,0 +1,103 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/bin/bash
+# TEMPORARY: delete this script once every machine has applied it.
+#
+# Removes what earlier setups (branch backup/pre-pivot-2026-11-11 and before) and the tools they
+# brought in left behind. By kind, whatever their names: global agent instructions, skills,
+# subagents, slash commands, prompts, rules, hooks and the statusline of Claude Code and Codex.
+# By name: the ralph-wiggum plugin, and herdr, Orca, OpenCode, Copilot CLI, Pi and rtk. Claude
+# Code's and Codex's own settings, logins and history stay, as do skills synced from claude.ai and
+# Codex's bundled .system skills.
+set -euo pipefail
+
+remove() {
+  local path
+  for path in "$@"; do
+    if [ -e "$path" ] || [ -L "$path" ]; then
+      rm -rf -- "$path"
+      echo "removed $path"
+    fi
+  done
+}
+
+# Every skill in DIR except the names given. Dot-directories (.system, .trash) never match *.
+remove_skills() {
+  local dir="$1" skill
+  shift
+  [ -d "$dir" ] || return 0
+  for skill in "$dir"/*; do
+    [ -e "$skill" ] || continue
+    case " $* " in *" $(basename "$skill") "*) continue ;; esac
+    remove "$skill"
+  done
+}
+
+# Claude Code
+remove ~/.claude/CLAUDE.md ~/.claude/rules ~/.claude/statusline.sh ~/.claude/agents ~/.claude/commands ~/.claude/hooks
+remove ~/.claude/{CLAUDE.md,settings.json,statusline.sh}.bak*
+remove_skills ~/.claude/skills synced
+
+# Codex
+remove ~/.codex/AGENTS.md ~/.codex/RTK.md ~/.codex/herdr-agent-state.sh \
+  ~/.codex/agents ~/.codex/rules ~/.codex/prompts ~/.codex/hooks.json
+remove ~/.codex/{AGENTS.md,config.toml,hooks.json}.bak*
+remove_skills ~/.codex/skills
+
+# Skills shared between agents
+remove_skills ~/.agents/skills
+
+# herdr, Orca, OpenCode, Copilot CLI, Pi
+remove ~/.local/bin/herdr ~/.config/herdr ~/.local/state/herdr ~/.cache/herdr
+remove ~/.local/bin/orca-ide ~/.local/share/orca-ide ~/.local/share/applications/orca-ide.desktop \
+  ~/.orca ~/.config/orca ~/.cache/orca
+remove ~/.opencode ~/.config/opencode ~/.local/share/opencode ~/.local/state/opencode ~/.cache/opencode
+remove ~/.copilot ~/.cache/copilot
+remove ~/.pi
+
+# rtk and the ralph-wiggum Claude Code plugin
+if [ -e ~/.cargo/bin/rtk ]; then
+  cargo uninstall rtk 2>/dev/null || rm -f ~/.cargo/bin/rtk
+  echo "removed ~/.cargo/bin/rtk"
+fi
+remove ~/.config/rtk ~/.local/share/rtk ~/Library/"Application Support"/rtk
+if command -v claude >/dev/null && claude plugin list 2>/dev/null | grep -q 'ralph-wiggum@'; then
+  claude plugin uninstall ralph-wiggum@claude-plugins-official
+fi
+
+# npm installs of OpenCode, Copilot CLI and Pi, in each Node install that has them (mise's, the
+# system's or Homebrew's). Claude Code and Codex may share these installs, so only these go.
+npm_packages=(opencode-ai @github/copilot @mariozechner/pi-coding-agent @earendil-works/pi-coding-agent)
+for prefix in ~/.local/share/mise/installs/node/* /usr /opt/homebrew /usr/local; do
+  [ -L "$prefix" ] && continue # mise's version aliases point at the real installs
+  [ -x "$prefix/bin/npm" ] || continue
+  installed=()
+  for package in "${npm_packages[@]}"; do
+    [ -d "$prefix/lib/node_modules/$package" ] && installed+=("$package")
+  done
+  [ "${#installed[@]}" -eq 0 ] && continue
+  if [ -w "$prefix/lib/node_modules" ]; then
+    PATH="$prefix/bin:$PATH" "$prefix/bin/npm" uninstall -g "${installed[@]}"
+  else
+    sudo "$prefix/bin/npm" uninstall -g "${installed[@]}"
+  fi
+  echo "uninstalled ${installed[*]} from $prefix"
+done
+
+# All hooks and the statusline in Claude Code's settings. (Codex's hooks live in hooks.json, removed
+# above. Its config.toml is left alone: the hook trust entries there refer to nothing now.)
+if [ -f ~/.claude/settings.json ]; then
+  python3 - <<'PY'
+import json, os
+
+path = os.path.expanduser("~/.claude/settings.json")
+data = json.load(open(path))
+if "hooks" in data or "statusLine" in data:
+    data.pop("hooks", None)
+    data.pop("statusLine", None)
+    with open(path, "w") as f:
+        json.dump(data, f, indent=2)
+        f.write("\n")
+    print(f"removed hooks and the statusline from {path}")
+PY
+fi
+{{ end -}}

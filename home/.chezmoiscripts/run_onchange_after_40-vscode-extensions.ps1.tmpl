@@ -1,0 +1,13 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Installs the VS Code extensions in .chezmoidata/packages.yaml. Reruns when that list changes.
+$env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+$failed = @()
+foreach ($extension in @({{ range $i, $e := concat .vscode.extensions .vscode.windows }}{{ if $i }}, {{ end }}{{ $e | quote }}{{ end }})) {
+    code --install-extension $extension
+    if ($LASTEXITCODE -ne 0) { $failed += $extension }
+}
+if ($failed) {
+    Write-Host "VS Code failed to install: $($failed -join ', ')"
+    exit 1
+}
+{{ end -}}

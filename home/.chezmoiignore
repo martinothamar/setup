@@ -1,0 +1,24 @@
+agents/**/.env
+
+{{- if eq .chezmoi.os "windows" }}
+.bashrc
+.bash_profile
+.config
+{{- end }}
+
+{{- if ne .chezmoi.os "darwin" }}
+Library
+{{- end }}
+
+{{- if ne .chezmoi.os "windows" }}
+AppData
+{{- end }}
+
+{{- /* VS Code runs on the Windows side of WSL. */}}
+{{- if or (ne .chezmoi.os "linux") .wsl }}
+.config/Code
+{{- end }}
+
+{{- if not .wsl }}
+.config/bash/multiaz.sh
+{{- end }}

@@ -1,0 +1,22 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/bin/bash
+# Installs the packages in .chezmoidata/packages.yaml. Reruns when that list changes.
+set -euo pipefail
+{{ if eq .chezmoi.os "darwin" -}}
+brew bundle --file=- <<'EOF'
+{{- range .packages.darwin.taps }}
+tap {{ . | quote }}
+{{- end }}
+{{- range .packages.darwin.brews }}
+brew {{ . | quote }}
+{{- end }}
+{{- range .packages.darwin.casks }}
+cask {{ . | quote }}
+{{- end }}
+EOF
+{{- else if .wsl }}
+sudo pacman -Syu --needed --noconfirm {{ concat .packages.pacman.common .packages.pacman.wsl | join " " }}
+{{- else }}
+paru -Syu --needed --noconfirm --skipreview {{ concat .packages.pacman.common .packages.pacman.desktop | join " " }}
+{{- end }}
+{{ end -}}

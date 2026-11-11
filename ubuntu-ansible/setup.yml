@@ -1,9 +1,0 @@
----
-- name: Setup base (packaging)
-  ansible.builtin.import_playbook: base.yml
-
-- name: Setup for dev
-  ansible.builtin.import_playbook: dev.yml
-
-- name: Setup system config
-  ansible.builtin.import_playbook: playbooks/config/config.yml

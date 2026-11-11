@@ -1,0 +1,23 @@
+{{- if and (ne .chezmoi.os "windows") (not .wsl) -}}
+#!/bin/bash
+# One-time desktop setup: agentctl (updates itself with `agentctl self update`) and, on Linux,
+# the Tailscale daemon.
+set -euo pipefail
+
+if ! command -v agentctl >/dev/null; then
+  curl -fsSL https://raw.githubusercontent.com/digdir/digdir-agents/main/agentctl/install.sh | sh
+fi
+{{- if eq .chezmoi.os "darwin" }}
+
+# Make Homebrew's bash the login shell.
+brew_bash="$(brew --prefix)/bin/bash"
+grep -qxF "$brew_bash" /etc/shells || echo "$brew_bash" | sudo tee -a /etc/shells >/dev/null
+[ "$(dscl . -read ~/ UserShell | awk '{print $2}')" = "$brew_bash" ] || chsh -s "$brew_bash"
+{{- else }}
+
+sudo systemctl enable --now tailscaled docker
+id -nG | grep -qw docker || sudo usermod -aG docker "$USER"
+{{- end }}
+
+echo "Sign in to Tailscale if this machine is new: {{ if eq .chezmoi.os "linux" }}sudo tailscale up{{ else }}open the Tailscale app{{ end }}"
+{{ end -}}

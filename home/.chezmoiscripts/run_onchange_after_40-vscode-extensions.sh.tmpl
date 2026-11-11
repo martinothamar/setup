@@ -1,0 +1,8 @@
+{{- if and (ne .chezmoi.os "windows") (not .wsl) -}}
+#!/bin/bash
+# Installs the VS Code extensions in .chezmoidata/packages.yaml. Reruns when that list changes.
+set -euo pipefail
+for extension in {{ .vscode.extensions | join " " }}; do
+  code --install-extension "$extension"
+done
+{{ end -}}

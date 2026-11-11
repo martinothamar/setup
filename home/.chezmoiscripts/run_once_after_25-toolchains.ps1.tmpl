@@ -1,0 +1,26 @@
+{{- if eq .chezmoi.os "windows" -}}
+# One-time toolchain setup. Go and rustup come from winget (see packages.yaml). Update with
+# `rustup update` and `dotnetup update`.
+$env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+
+cmd /c "rustup default >nul 2>&1"
+if ($LASTEXITCODE -ne 0) {
+    rustup default stable
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+
+$dotnetup = Join-Path $HOME '.dotnetup\dotnetup.exe'
+if (-not (Test-Path $dotnetup)) {
+    Invoke-RestMethod -ErrorAction Stop https://aka.ms/dotnetup/get-dotnetup.ps1 | Invoke-Expression
+    if (-not (Test-Path $dotnetup)) { Write-Host "dotnetup is not at $dotnetup after its installer ran"; exit 1 }
+}
+# Brings SDKs installed system-wide (such as winget's in C:\Program Files\dotnet) into dotnetup, as
+# the next step hides them.
+& $dotnetup sdk install latest --migrate-from-system --no-progress
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# dotnetup's "everywhere" mode, the Windows default: dotnetup's .NET goes on the system PATH, ahead
+# of C:\Program Files\dotnet, which a user PATH entry cannot get ahead of. It needs administrator.
+$elevated = Start-Process $dotnetup -Verb RunAs -Wait -PassThru -ArgumentList 'env', 'set', 'everywhere'
+if ($elevated.ExitCode -ne 0) { exit $elevated.ExitCode }
+{{ end -}}

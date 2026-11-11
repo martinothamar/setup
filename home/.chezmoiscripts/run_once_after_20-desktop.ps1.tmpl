@@ -1,0 +1,16 @@
+{{- if eq .chezmoi.os "windows" -}}
+# One-time desktop setup: agentctl, which updates itself with `agentctl self update`.
+# It needs the HypervisorPlatform feature, which bootstrap.ps1 enables.
+function Update-Path {
+    $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+}
+Update-Path
+if (-not (Get-Command agentctl -ErrorAction SilentlyContinue)) {
+    Invoke-RestMethod -ErrorAction Stop https://raw.githubusercontent.com/digdir/digdir-agents/main/agentctl/install.ps1 | Invoke-Expression
+    Update-Path
+    if (-not (Get-Command agentctl -ErrorAction SilentlyContinue)) {
+        Write-Host 'agentctl is not on PATH after its installer ran'
+        exit 1
+    }
+}
+{{ end -}}

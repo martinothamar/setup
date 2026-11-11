@@ -1,0 +1,26 @@
+{{- if eq .chezmoi.os "windows" -}}
+{{- $tag := (gitHubLatestRelease "martinothamar/t3code").TagName -}}
+# Installs the t3code fork's latest release ({{ $tag }}) with the fork's own installer. The
+# release tag is part of this script, so a new release reruns it.
+$env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+$tmp = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid())
+New-Item -ItemType Directory -Path $tmp | Out-Null
+$ok = $false
+try {
+    $script = Join-Path $tmp 'install-desktop.ts'
+    Invoke-WebRequest -UseBasicParsing -ErrorAction Stop -OutFile $script `
+        https://raw.githubusercontent.com/martinothamar/t3code/{{ $tag }}/scripts/fork/install-desktop.ts
+    node $script --version {{ trimPrefix "v" $tag }}
+    $ok = $LASTEXITCODE -eq 0
+} catch {
+    Write-Host $_
+} finally {
+    Remove-Item -Recurse -Force $tmp
+}
+if (-not $ok) { exit 1 }
+
+# The fork shares upstream's app ID, so winget sees it as T3Tools.T3Code. The pin keeps
+# `winget upgrade --all` from replacing it with upstream. It fails when the pin exists.
+cmd /c "winget pin add --id T3Tools.T3Code --blocking >nul 2>&1"
+exit 0
+{{ end -}}

@@ -1,0 +1,41 @@
+# ~/.bashrc, managed by chezmoi (github.com/martinothamar/setup).
+# Put machine-specific additions in ~/.bashrc.local, which is sourced last and not managed.
+
+# Environment, also for non-interactive shells such as `ssh host cmd`.
+export PATH="$HOME/.local/bin:$PATH"
+export EDITOR=vim
+{{- if not .wsl }}
+
+# Toolchains: rustup, Go, dotnetup.
+export PATH="$HOME/.cargo/bin:$HOME/go/bin:$HOME/.dotnet/tools:$PATH"
+export CARGO_TARGET_DIR="$HOME/.cargo/target"
+export DOTNET_TREATWARNINGSASERRORS=true
+if [ -x ~/.dotnetup/dotnetup ]; then
+  eval "$(~/.dotnetup/dotnetup env script --shell bash --dotnet --dotnetup)"
+fi
+{{- end }}
+
+[[ $- != *i* ]] && return
+
+PS1='[$SHLVL:\u@\h \W]\$ '
+
+eval "$(zoxide init bash)"
+eval "$(direnv hook bash)"
+{{- if eq .chezmoi.os "linux" }}
+alias step=step-cli # Arch's name for the smallstep CLI
+{{- end }}
+
+{{- if eq .chezmoi.os "darwin" }}
+
+[[ -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]] && . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
+{{- end }}
+
+{{- if .wsl }}
+
+. ~/.config/bash/multiaz.sh
+{{- else }}
+
+alias a=agentctl
+{{- end }}
+
+[[ -f ~/.bashrc.local ]] && . ~/.bashrc.local
